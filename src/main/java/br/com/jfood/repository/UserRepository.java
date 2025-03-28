@@ -25,7 +25,6 @@ public class UserRepository implements GenericRepository<User> {
 
     @Override
     public void save(User user) {
-        user.setId(UUID.randomUUID());
         users.add(user);
     }
 

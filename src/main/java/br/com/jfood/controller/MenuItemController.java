@@ -1,5 +1,8 @@
 package br.com.jfood.controller;
 
+import br.com.jfood.dto.MenuItemDTO;
+import br.com.jfood.mapper.MenuItemMapper;
+import br.com.jfood.model.MessageResponse;
 import br.com.jfood.model.MenuItem;
 import br.com.jfood.service.MenuItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/menu-items")
 public class MenuItemController {
+
+    @Autowired
+    private MenuItemMapper menuItemMapper;
 
     @Autowired
     private MenuItemService menuItemService;
@@ -29,21 +35,23 @@ public class MenuItemController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Object> createMenuItem(@PathVariable UUID userId, @RequestBody MenuItem menuItem) {
+    public ResponseEntity<Object> createMenuItem(@PathVariable UUID userId, @RequestBody MenuItemDTO menuItemDTO) {
         try {
-            menuItemService.save(userId, menuItem);
+            menuItemService.save(userId, menuItemMapper.toMenuItem(menuItemDTO));
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse(e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMenuItem(@PathVariable UUID id) {
+    public ResponseEntity<Object> deleteMenuItem(@PathVariable UUID id) {
         if (menuItemService.findById(id).isPresent()) {
             menuItemService.delete(id);
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new MessageResponse("Menu item not found."));
     }
 }

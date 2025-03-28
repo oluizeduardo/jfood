@@ -1,5 +1,8 @@
 package br.com.jfood.controller;
 
+import br.com.jfood.dto.UserDTO;
+import br.com.jfood.mapper.UserMapper;
+import br.com.jfood.model.MessageResponse;
 import br.com.jfood.model.User;
 import br.com.jfood.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private UserService userService;
@@ -31,17 +37,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody User user) {
-        userService.save(user);
+    public ResponseEntity<Void> createUser(@RequestBody UserDTO userDTO) {
+        userService.save(userMapper.toUser(userDTO));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<Object> deleteUser(@PathVariable UUID id) {
         if (userService.findById(id).isPresent()) {
             userService.delete(id);
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new MessageResponse("User not found."));
     }
 }

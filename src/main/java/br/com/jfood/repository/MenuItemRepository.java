@@ -25,7 +25,6 @@ public class MenuItemRepository implements GenericRepository<MenuItem> {
 
     @Override
     public void save(MenuItem menuItem) {
-        menuItem.setId(UUID.randomUUID());
         menuItems.add(menuItem);
     }
 
