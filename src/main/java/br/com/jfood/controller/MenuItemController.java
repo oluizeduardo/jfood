@@ -5,6 +5,7 @@ import br.com.jfood.mapper.MenuItemMapper;
 import br.com.jfood.model.MessageResponse;
 import br.com.jfood.model.MenuItem;
 import br.com.jfood.service.MenuItemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class MenuItemController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Object> createMenuItem(@PathVariable UUID userId, @RequestBody MenuItemDTO menuItemDTO) {
+    public ResponseEntity<Object> createMenuItem(@PathVariable UUID userId, @RequestBody @Valid MenuItemDTO menuItemDTO) {
         try {
             menuItemService.save(userId, menuItemMapper.toMenuItem(menuItemDTO));
             return ResponseEntity.status(HttpStatus.CREATED).build();

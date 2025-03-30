@@ -5,6 +5,7 @@ import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.MessageResponse;
 import br.com.jfood.model.User;
 import br.com.jfood.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> createUser(@RequestBody @Valid UserDTO userDTO) {
         userService.save(userMapper.toUser(userDTO));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
