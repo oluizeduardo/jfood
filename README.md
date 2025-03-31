@@ -5,7 +5,7 @@
 JFood é uma API REST desenvolvida com **Java** e **Spring Boot**, que permite o gerenciamento de usuários e um cardápio de itens. Apenas usuários com papel de **ADMIN** podem cadastrar novos itens no cardápio.
 
 ## 🚀 Tecnologias Utilizadas
-- **Java 24**
+- **Java 21**
 - **Spring Boot 3.4.4**
 - **Maven**
 
