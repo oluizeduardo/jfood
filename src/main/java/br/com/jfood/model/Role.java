@@ -1,7 +1,7 @@
 package br.com.jfood.model;
 
 public enum Role {
-    CUSTUMER(1),
+    CUSTOMER(1),
     ADMIN(2);
 
     private final int value;
@@ -16,9 +16,9 @@ public enum Role {
 
     public static Role getFromValue(int value) {
         return switch (value) {
-            case 1 -> CUSTUMER;
+            case 1 -> CUSTOMER;
             case 2 -> ADMIN;
-            default -> CUSTUMER;
+            default -> CUSTOMER;
         };
     }
 }
