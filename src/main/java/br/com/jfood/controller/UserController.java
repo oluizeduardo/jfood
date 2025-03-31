@@ -3,6 +3,7 @@ package br.com.jfood.controller;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.MessageResponse;
+import br.com.jfood.model.Role;
 import br.com.jfood.model.User;
 import br.com.jfood.service.UserService;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -53,4 +55,25 @@ public class UserController {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new MessageResponse("User not found."));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable UUID id, @RequestBody @Valid UserDTO userDTO) {
+        Optional<User> foundUser = userService.findById(id);
+
+        if (foundUser.isPresent()) {
+            User existingUser = foundUser.get();
+
+            existingUser.setName(userDTO.getName());
+            existingUser.setCpf(userDTO.getCpf());
+            existingUser.setEmail(userDTO.getEmail());
+            existingUser.setRole(Role.getFromValue(userDTO.getRole()));
+
+            return ResponseEntity.ok(existingUser);
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new MessageResponse("User not found."));
+        }
+    }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -54,5 +55,23 @@ public class MenuItemController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new MessageResponse("Menu item not found."));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable UUID id, @RequestBody @Valid MenuItemDTO menuItemDTO) {
+        Optional<MenuItem> foundItem = menuItemService.findById(id);
+
+        if (foundItem.isPresent()) {
+            MenuItem existingItem = foundItem.get();
+
+            existingItem.setDescription(menuItemDTO.getDescription());
+            existingItem.setPrice(menuItemDTO.getPrice());
+
+            return ResponseEntity.ok(existingItem);
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new MessageResponse("Menu item not found."));
+        }
     }
 }
