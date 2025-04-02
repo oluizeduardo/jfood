@@ -52,6 +52,13 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- POSTGRESQL -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
