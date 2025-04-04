@@ -1,28 +1,90 @@
 package br.com.jfood.model;
 
-import java.util.UUID;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "users")
 public class User {
 
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "keycloak_id")
+    private String keycloakId;
+
     private String name;
-    private String cpf;
+    private String username;
     private String email;
-    private Role role;
+    private String phone;
+    private String address;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public User() {
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public User(Long id, String keycloakId, String name, String username, String email, String phone, String address) {
+        this.id = id;
+        this.keycloakId = keycloakId;
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
 
-    public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
+    public Long id() {
+        return id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
+    public String keycloakId() {
+        return keycloakId;
+    }
 
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String username() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String email() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String phone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String address() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

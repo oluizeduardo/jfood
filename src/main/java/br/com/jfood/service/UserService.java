@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class UserService implements GenericService<User> {
@@ -21,7 +20,7 @@ public class UserService implements GenericService<User> {
     }
 
     @Override
-    public Optional<User> findById(UUID id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -31,7 +30,7 @@ public class UserService implements GenericService<User> {
     }
 
     @Override
-    public void delete(UUID id) {
-        userRepository.delete(id);
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 }

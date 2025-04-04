@@ -1,0 +1,10 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    keycloak_id VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address VARCHAR(100) NOT NULL
+);
+
