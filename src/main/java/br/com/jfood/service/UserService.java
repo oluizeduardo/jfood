@@ -1,35 +1,46 @@
 package br.com.jfood.service;
 
+import br.com.jfood.dto.UserDTO;
+import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
 import br.com.jfood.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class UserService implements GenericService<User> {
+public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
-    @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public UserService(UserMapper userMapper, UserRepository userRepository) {
+        this.userMapper = userMapper;
+        this.userRepository = userRepository;
     }
 
-    @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public Page<UserDTO> findAll(Pageable pageable) {
+        Page<User> pageableUsers = userRepository.findAll(pageable);
+        return pageableUsers.map(userMapper::toDTO);
     }
 
-    @Override
+    public UserDTO findById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return userMapper.toDTO(user);
+        }
+        return null;
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }
 
-    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }

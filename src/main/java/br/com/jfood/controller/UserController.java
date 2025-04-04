@@ -1,29 +1,37 @@
 package br.com.jfood.controller;
 
+import br.com.jfood.dto.UserDTO;
+import br.com.jfood.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-//    @Autowired
-//    private UserMapper userMapper;
-//
-//    @Autowired
-//    private UserService userService;
-//
-//    @GetMapping
-//    public ResponseEntity<List<User>> getAllUsers() {
-//        List<User> users = userService.findAll();
-//        return ResponseEntity.ok(users);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<User> getUserById(@PathVariable UUID id) {
-//        return userService.findById(id)
-//                .map(ResponseEntity::ok)
-//                .orElseGet(() -> ResponseEntity.notFound().build());
-//    }
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        return userService.findAll(pageable);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        UserDTO foundUser = userService.findById(id);
+        if (foundUser != null) {
+            return ResponseEntity.ok(foundUser);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 //    @PostMapping
 //    public ResponseEntity<Void> createUser(@RequestBody @Valid UserDTO userDTO) {
