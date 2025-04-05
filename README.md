@@ -7,7 +7,9 @@ JFood é uma API REST desenvolvida com **Java** e **Spring Boot**, que permite o
 - **Spring Boot 3.4.4**
 - **Maven**
 - **PostgresSQL**
+- **Flyway**
 - **Keycloak**
+- **Spring Security**
 
 
 ## 🛠️ Instalação e Execução
