@@ -15,9 +15,13 @@ public record UserDTO(
         @Size(min = 3, max = 8, message = "The password must be between 3 and 8 characters long.")
         String password,
 
-        @NotBlank(message = "Name can not be blank.")
-        @Size(min = 3, max = 100, message = "The name must be between 3 and 100 characters long.")
-        String name,
+        @NotBlank(message = "FirstName can not be blank.")
+        @Size(min = 3, max = 100, message = "The FirstName must be between 3 and 100 characters long.")
+        String firstName,
+
+        @NotBlank(message = "familyName can not be blank.")
+        @Size(min = 3, max = 100, message = "The familyName must be between 3 and 100 characters long.")
+        String familyName,
 
         @NotBlank(message = "Phone can not be blank.")
         String phone,

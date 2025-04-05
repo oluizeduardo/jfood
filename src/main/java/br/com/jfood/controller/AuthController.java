@@ -1,9 +1,10 @@
 package br.com.jfood.controller;
 
 import br.com.jfood.dto.UserDTO;
-import br.com.jfood.model.User;
+import br.com.jfood.model.BaseResponse;
 import br.com.jfood.service.KeycloakService;
 import br.com.jfood.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,23 +24,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO userDTO) {
-
-        // Save user's credentials in Keycloak database.
-        String keycloakId = keycloakService.createUserInKeycloak(userDTO.username(), userDTO.email(), userDTO.password());
-
-        // Save user's additional infos in the application database.
-        User user = new User();
-        user.setKeycloakId(keycloakId);
-        user.setUsername(userDTO.username());
-        user.setEmail(userDTO.email());
-        user.setName(userDTO.name());
-        user.setPhone(userDTO.phone());
-        user.setAddress(userDTO.address());
-
-        userService.save(user);
-
-        return ResponseEntity.ok("User registered successfully!");
+    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+            // Save user in Keycloak database.
+            String keycloakId = keycloakService.createUserInKeycloak(userDTO);
+            // Save additional user's data in the application's database.
+            userService.save(userDTO, keycloakId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(e.getMessage()));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
 

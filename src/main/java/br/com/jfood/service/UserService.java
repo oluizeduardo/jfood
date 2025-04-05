@@ -8,9 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -37,8 +35,24 @@ public class UserService {
         return null;
     }
 
-    public void save(User user) {
+    public void save(UserDTO userDTO, String keycloakId) {
+        User user = createUser(userDTO, keycloakId);
         userRepository.save(user);
+    }
+
+    private User createUser(UserDTO userDTO, String keycloakId) {
+        User user = new User();
+        user.setKeycloakId(keycloakId);
+        user.setUsername(userDTO.username());
+        user.setEmail(userDTO.email());
+        user.setName(adjustName(userDTO.firstName(), userDTO.familyName()));
+        user.setPhone(userDTO.phone());
+        user.setAddress(userDTO.address());
+        return user;
+    }
+
+    private String adjustName(String firstname, String familyName) {
+        return firstname + " " + familyName;
     }
 
     public void delete(Long id) {

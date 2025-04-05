@@ -1,9 +1,9 @@
 package br.com.jfood.model;
 
-public class MessageResponse {
+public class BaseResponse {
     private String message;
 
-    public MessageResponse(String message) {
+    public BaseResponse(String message) {
         this.message = message;
     }
 
