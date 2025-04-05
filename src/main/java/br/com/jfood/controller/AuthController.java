@@ -4,6 +4,7 @@ import br.com.jfood.dto.UserDTO;
 import br.com.jfood.model.BaseResponse;
 import br.com.jfood.service.KeycloakService;
 import br.com.jfood.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Object> registerUser(@RequestBody @Valid UserDTO userDTO) {
         try {
             // Save user in Keycloak database.
             String keycloakId = keycloakService.createUserInKeycloak(userDTO);
