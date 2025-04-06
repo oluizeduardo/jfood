@@ -46,8 +46,17 @@ public class UserService {
         userRepository.save(createUser(keycloakUserDTO, keycloakId));
     }
 
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    public void delete(UserDTO userDTO) {
+        var keycloakUserId = userDTO.getKeycloakId();
+        var idUser = userDTO.getId();
+        if (keycloakUserId != null && idUser != null) {
+            try {
+                keycloakService.deleteUserInKeycloak(keycloakUserId);
+                userRepository.deleteById(idUser);
+            } catch (Exception e) {
+                System.out.println("Error deleting user. Details: " + e.getMessage());
+            }
+        }
     }
 
     private User createUser(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
@@ -71,12 +80,23 @@ public class UserService {
         if (optionalUser.isEmpty()) {
             return null;
         }
+
         User user = optionalUser.get();
+
+        // Try updating in Keycloak first.
+        try {
+            keycloakService.updateUserInKeycloak(user.getKeycloakId(), keycloakUserDTO);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+        // Update user in the application's database.
         user.setName(adjustName(keycloakUserDTO.getFirstName(), keycloakUserDTO.getFamilyName()));
         user.setAddress(keycloakUserDTO.getAddress());
         user.setEmail(keycloakUserDTO.getEmail());
         user.setPhone(keycloakUserDTO.getPhone());
-        user.setUsername(keycloakUserDTO.getUsername());
+
         return userMapper.toDTO(user);
     }
 }

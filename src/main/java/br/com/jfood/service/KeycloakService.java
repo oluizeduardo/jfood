@@ -1,6 +1,7 @@
 package br.com.jfood.service;
 
 import br.com.jfood.dto.KeycloakUserDTO;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -121,5 +122,81 @@ public class KeycloakService {
 
         return user;
     }
+
+    /**
+     * Updates an existing user in Keycloak based on the provided {@link KeycloakUserDTO}.
+     *
+     * @param userId          the ID of the user in Keycloak to be updated
+     * @param keycloakUserDTO the new data for the user
+     * @throws RuntimeException if the update fails or the user is not found
+     */
+    public void updateUserInKeycloak(String userId, KeycloakUserDTO keycloakUserDTO) {
+        try {
+            // Search for existing user.
+            UserRepresentation existingUser = keycloak.realm(this.realm)
+                    .users()
+                    .get(userId)
+                    .toRepresentation();
+
+            if (existingUser == null) {
+                throw new RuntimeException("User not found in Keycloak.");
+            }
+
+            // Updates fields (except password, which needs specific endpoint).
+            if (keycloakUserDTO.getEmail() != null)
+                existingUser.setEmail(keycloakUserDTO.getEmail());
+
+            if (keycloakUserDTO.getFirstName() != null)
+                existingUser.setFirstName(keycloakUserDTO.getFirstName());
+
+            if (keycloakUserDTO.getFamilyName() != null)
+                existingUser.setLastName(keycloakUserDTO.getFamilyName());
+
+            existingUser.setEmailVerified(true);
+            existingUser.setEnabled(true);
+
+            // Apply the update.
+            keycloak.realm(this.realm)
+                    .users()
+                    .get(userId)
+                    .update(existingUser);
+
+            // Update password separately if provided.
+            if (keycloakUserDTO.getPassword() != null && !keycloakUserDTO.getPassword().isBlank()) {
+                CredentialRepresentation credential = new CredentialRepresentation();
+                credential.setType(CredentialRepresentation.PASSWORD);
+                credential.setValue(keycloakUserDTO.getPassword());
+                credential.setTemporary(false);
+
+                keycloak.realm(this.realm)
+                        .users()
+                        .get(userId)
+                        .resetPassword(credential);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating user in Keycloak: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Deletes a user from Keycloak by their user ID.
+     *
+     * @param userId the Keycloak user ID to be deleted.
+     * @throws RuntimeException if the user does not exist or deletion fails.
+     */
+    public void deleteUserInKeycloak(String userId) {
+        try {
+            keycloak.realm(this.realm)
+                    .users()
+                    .get(userId)
+                    .remove();
+        } catch (NotFoundException e) {
+            throw new RuntimeException("User not found in Keycloak: " + userId, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting user in Keycloak: " + e.getMessage(), e);
+        }
+    }
+
 
 }

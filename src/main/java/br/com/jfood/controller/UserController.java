@@ -55,7 +55,7 @@ public class UserController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(new BaseResponse("User not found."));
         }
-        userService.delete(id);
+        userService.delete(foundUser);
         return ResponseEntity.noContent().build();
     }
 
