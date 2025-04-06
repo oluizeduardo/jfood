@@ -1,32 +1,81 @@
 package br.com.jfood.dto;
 
-import jakarta.validation.constraints.*;
+public class UserDTO {
 
-public record UserDTO(
-        @NotBlank(message = "Username can not be blank.")
-        @Size(min = 3, max = 100, message = "The name must be between 3 and 100 characters long.")
-        String username,
+    private Long id;
+    private String keycloakId;
+    private String name;
+    private String username;
+    private String email;
+    private String phone;
+    private String address;
 
-        @NotBlank(message = "Email can not be blank.")
-        @Email(message = "Invalid e-mail.")
-        String email,
+    public UserDTO() {
+    }
 
-        @NotBlank(message = "Password can not be blank.")
-        @Size(min = 3, max = 8, message = "The password must be between 3 and 8 characters long.")
-        String password,
+    public UserDTO(Long id, String keycloakId, String name, String username, String email, String phone, String address) {
+        this.id = id;
+        this.keycloakId = keycloakId;
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
 
-        @NotBlank(message = "FirstName can not be blank.")
-        @Size(min = 3, max = 100, message = "The FirstName must be between 3 and 100 characters long.")
-        String firstName,
+    public Long getId() {
+        return id;
+    }
 
-        @NotBlank(message = "familyName can not be blank.")
-        @Size(min = 3, max = 100, message = "The familyName must be between 3 and 100 characters long.")
-        String familyName,
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        @NotBlank(message = "Phone can not be blank.")
-        String phone,
+    public String getKeycloakId() {
+        return keycloakId;
+    }
 
-        @NotBlank(message = "Address can not be blank.")
-        String address
-) {
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

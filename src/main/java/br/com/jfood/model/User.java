@@ -32,7 +32,7 @@ public class User {
         this.address = address;
     }
 
-    public Long id() {
+    public Long getId() {
         return id;
     }
 
@@ -40,7 +40,7 @@ public class User {
         this.id = id;
     }
 
-    public String keycloakId() {
+    public String getKeycloakId() {
         return keycloakId;
     }
 
@@ -48,7 +48,7 @@ public class User {
         this.keycloakId = keycloakId;
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 
@@ -56,7 +56,7 @@ public class User {
         this.name = name;
     }
 
-    public String username() {
+    public String getUsername() {
         return username;
     }
 
@@ -64,7 +64,7 @@ public class User {
         this.username = username;
     }
 
-    public String email() {
+    public String getEmail() {
         return email;
     }
 
@@ -72,7 +72,7 @@ public class User {
         this.email = email;
     }
 
-    public String phone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -80,7 +80,7 @@ public class User {
         this.phone = phone;
     }
 
-    public String address() {
+    public String getAddress() {
         return address;
     }
 

@@ -1,5 +1,6 @@
 package br.com.jfood.service;
 
+import br.com.jfood.dto.KeycloakUserDTO;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
@@ -7,6 +8,7 @@ import br.com.jfood.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,10 +17,12 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final KeycloakService keycloakService;
 
-    public UserService(UserMapper userMapper, UserRepository userRepository) {
+    public UserService(UserMapper userMapper, UserRepository userRepository, KeycloakService keycloakService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.keycloakService = keycloakService;
     }
 
     public Page<UserDTO> findAll(Pageable pageable) {
@@ -26,28 +30,34 @@ public class UserService {
         return pageableUsers.map(userMapper::toDTO);
     }
 
-    public UserDTO findById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            return userMapper.toDTO(user);
-        }
-        return null;
+    public UserDTO findUserById(Long id) {
+        Optional<User> optionalUser = findById(id);
+        return optionalUser.map(userMapper::toDTO).orElse(null);
     }
 
-    public void save(UserDTO userDTO, String keycloakId) {
-        User user = createUser(userDTO, keycloakId);
-        userRepository.save(user);
+    private Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
-    private User createUser(UserDTO userDTO, String keycloakId) {
+    public void save(KeycloakUserDTO keycloakUserDTO) {
+        // Save user in Keycloak database.
+        String keycloakId = keycloakService.createUserInKeycloak(keycloakUserDTO);
+        // Save user's details in the application's database.
+        userRepository.save(createUser(keycloakUserDTO, keycloakId));
+    }
+
+    public void delete(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    private User createUser(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
         User user = new User();
         user.setKeycloakId(keycloakId);
-        user.setUsername(userDTO.username());
-        user.setEmail(userDTO.email());
-        user.setName(adjustName(userDTO.firstName(), userDTO.familyName()));
-        user.setPhone(userDTO.phone());
-        user.setAddress(userDTO.address());
+        user.setUsername(keycloakUserDTO.getUsername());
+        user.setEmail(keycloakUserDTO.getEmail());
+        user.setName(adjustName(keycloakUserDTO.getFirstName(), keycloakUserDTO.getFamilyName()));
+        user.setPhone(keycloakUserDTO.getPhone());
+        user.setAddress(keycloakUserDTO.getAddress());
         return user;
     }
 
@@ -55,7 +65,18 @@ public class UserService {
         return firstname + " " + familyName;
     }
 
-    public void delete(Long id) {
-        userRepository.deleteById(id);
+    @Transactional
+    public UserDTO updateUser(Long id, KeycloakUserDTO keycloakUserDTO) {
+        Optional<User> optionalUser = findById(id);
+        if (optionalUser.isEmpty()) {
+            return null;
+        }
+        User user = optionalUser.get();
+        user.setName(adjustName(keycloakUserDTO.getFirstName(), keycloakUserDTO.getFamilyName()));
+        user.setAddress(keycloakUserDTO.getAddress());
+        user.setEmail(keycloakUserDTO.getEmail());
+        user.setPhone(keycloakUserDTO.getPhone());
+        user.setUsername(keycloakUserDTO.getUsername());
+        return userMapper.toDTO(user);
     }
 }

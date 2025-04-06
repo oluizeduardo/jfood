@@ -1,6 +1,6 @@
 package br.com.jfood.service;
 
-import br.com.jfood.dto.UserDTO;
+import br.com.jfood.dto.KeycloakUserDTO;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -66,18 +66,18 @@ public class KeycloakService {
     }
 
     /**
-     * Creates a new user in Keycloak based on the provided {@link UserDTO}.
+     * Creates a new user in Keycloak based on the provided {@link KeycloakUserDTO}.
      *
-     * @param userDTO the data transfer object containing user details
+     * @param keycloakUserDTO the data transfer object containing user details
      * @return the ID of the newly created user in Keycloak
      * @throws RuntimeException if the user creation fails or {@code userDTO} is null
      */
-    public String createUserInKeycloak(UserDTO userDTO) {
-        if (userDTO == null) {
+    public String createUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
+        if (keycloakUserDTO == null) {
             throw new RuntimeException("Error creating user in Keycloak: Received null UserDTO.");
         }
 
-        UserRepresentation keycloakUser = createKeycloakUserRepresentation(userDTO);
+        UserRepresentation keycloakUser = createKeycloakUserRepresentation(keycloakUserDTO);
 
         try (Response response = keycloak.realm(this.realm).users().create(keycloakUser)) {
             int status = response.getStatus();
@@ -99,23 +99,23 @@ public class KeycloakService {
     }
 
     /**
-     * Builds a {@link UserRepresentation} object from the provided {@link UserDTO}.
+     * Builds a {@link UserRepresentation} object from the provided {@link KeycloakUserDTO}.
      *
-     * @param userDTO the user data.
+     * @param keycloakUserDTO the user data.
      * @return a configured {@code UserRepresentation} ready to be sent to Keycloak.
      */
-    private UserRepresentation createKeycloakUserRepresentation(UserDTO userDTO) {
+    private UserRepresentation createKeycloakUserRepresentation(KeycloakUserDTO keycloakUserDTO) {
         UserRepresentation user = new UserRepresentation();
-        user.setUsername(userDTO.username());
-        user.setEmail(userDTO.email());
+        user.setUsername(keycloakUserDTO.getUsername());
+        user.setEmail(keycloakUserDTO.getEmail());
         user.setEnabled(true);
         user.setEmailVerified(true);
-        user.setFirstName(userDTO.firstName());
-        user.setLastName(userDTO.familyName());
+        user.setFirstName(keycloakUserDTO.getFirstName());
+        user.setLastName(keycloakUserDTO.getFamilyName());
 
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType(CredentialRepresentation.PASSWORD);
-        credential.setValue(userDTO.password());
+        credential.setValue(keycloakUserDTO.getPassword());
         credential.setTemporary(false);
         user.setCredentials(Collections.singletonList(credential));
 
