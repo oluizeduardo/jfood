@@ -28,3 +28,6 @@ JFood é uma API REST desenvolvida com **Java** e **Spring Boot**, que permite o
    ```sh
    mvn spring-boot:run
    ```
+   
+## Postman Collection
+- [Collection](https://documenter.getpostman.com/view/2828428/2sB2cVg2vU)
