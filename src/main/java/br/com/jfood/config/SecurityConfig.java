@@ -11,12 +11,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String ROLE_MANAGER = "MANAGER";
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users/register").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/users/register").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(ROLE_MANAGER)
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(resourceServer ->
