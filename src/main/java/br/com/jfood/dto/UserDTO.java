@@ -9,11 +9,12 @@ public class UserDTO {
     private String email;
     private String phone;
     private String address;
+    private String role;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String keycloakId, String name, String username, String email, String phone, String address) {
+    public UserDTO(Long id, String keycloakId, String name, String username, String email, String phone, String address, String role) {
         this.id = id;
         this.keycloakId = keycloakId;
         this.name = name;
@@ -21,6 +22,7 @@ public class UserDTO {
         this.email = email;
         this.phone = phone;
         this.address = address;
+        this.role = role;
     }
 
     public Long getId() {
@@ -77,5 +79,13 @@ public class UserDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

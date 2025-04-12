@@ -2,6 +2,7 @@ package br.com.jfood.service;
 
 import br.com.jfood.dto.KeycloakUserDTO;
 import br.com.jfood.dto.PageResponseDTO;
+import br.com.jfood.dto.Role;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
@@ -50,23 +51,22 @@ public class UserService {
     }
 
     public void save(KeycloakUserDTO keycloakUserDTO) {
-        String keycloakId = saveUserInKeycloak(keycloakUserDTO);
-        if (keycloakId == null)
-            logger.warn("Impossible to save user in the application database, because keycloakId is null.");
-        else
-            saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakId);
+        String keycloakUserId = null;
+        try {
+            keycloakUserId = saveUserInKeycloak(keycloakUserDTO);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (keycloakUserId == null || keycloakUserId.isBlank())
+            throw new RuntimeException("Could not create Keycloak user, returned keycloakUserId null");
+
+        saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakUserId);
     }
 
     private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
-        String keycloakId = null;
-        try {
-            logger.info("Saving user in Keycloak.");
-            keycloakId = keycloakService.createUserInKeycloak(keycloakUserDTO);
-        } catch (RuntimeException ex) {
-            logger.error(ex.getMessage());
-            return null;
-        }
-        return (keycloakId == null || keycloakId.isBlank()) ? null : keycloakId;
+        logger.info("Saving user in Keycloak.");
+        return keycloakService.createUserInKeycloak(keycloakUserDTO);
     }
 
     @Transactional
@@ -107,6 +107,7 @@ public class UserService {
         user.setName(adjustName(keycloakUserDTO.getFirstName(), keycloakUserDTO.getFamilyName()));
         user.setPhone(keycloakUserDTO.getPhone());
         user.setAddress(keycloakUserDTO.getAddress());
+        user.setRole(Role.fromValue(keycloakUserDTO.getRole()));
         return user;
     }
 

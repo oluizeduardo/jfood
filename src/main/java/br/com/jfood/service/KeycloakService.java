@@ -1,19 +1,21 @@
 package br.com.jfood.service;
 
 import br.com.jfood.dto.KeycloakUserDTO;
+import br.com.jfood.dto.Role;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Service class responsible for interacting with Keycloak's Admin API
@@ -32,6 +34,8 @@ import java.util.Collections;
  */
 @Service
 public class KeycloakService {
+
+    private static final String MANAGEMENT_GROUP_NAME = "Management";
 
     private final Keycloak keycloak;
 
@@ -87,8 +91,12 @@ public class KeycloakService {
 
             return switch (status) {
                 case 201 -> {
-                    String location = response.getLocation().toString();
-                    yield location.substring(location.lastIndexOf("/") + 1);
+                    String keycloakUserId = getUserId(response);
+                    Role newUserRole = Role.fromValue(keycloakUserDTO.getRole());
+                    if (Role.ADMIN.equals(newUserRole)) {
+                        addUserInManagementGroup(keycloakUserId);
+                    }
+                    yield keycloakUserId;
                 }
                 case 400 -> throw new RuntimeException("Invalid user data.");
                 case 409 -> throw new RuntimeException("Username or email already exists.");
@@ -99,6 +107,34 @@ public class KeycloakService {
         } catch (Exception e) {
             throw new RuntimeException("Error creating user in Keycloak: " + e.getMessage(), e);
         }
+    }
+
+    private String getUserId(Response response) {
+        return CreatedResponseUtil.getCreatedId(response);
+    }
+
+    private void addUserInManagementGroup(String userId) {
+        GroupRepresentation group = findGroupByName(MANAGEMENT_GROUP_NAME);
+        addUserInGroup(userId, group.getId());
+    }
+
+    private GroupRepresentation findGroupByName(String groupName) {
+        List<GroupRepresentation> groups = getAllGroups();
+        return groups.stream()
+                .filter(group -> groupName.equalsIgnoreCase(group.getName()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Group '" + groupName + "' not found"));
+    }
+
+    private List<GroupRepresentation> getAllGroups() {
+        return keycloak.realm(realm).groups().groups();
+    }
+
+    private void addUserInGroup(String userId, String groupId) {
+        keycloak.realm(realm)
+                .users()
+                .get(userId)
+                .joinGroup(groupId);
     }
 
     /**
@@ -199,6 +235,5 @@ public class KeycloakService {
             throw new RuntimeException("Error deleting user in Keycloak: " + e.getMessage(), e);
         }
     }
-
 
 }

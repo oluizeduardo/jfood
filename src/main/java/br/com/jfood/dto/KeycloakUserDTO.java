@@ -30,12 +30,16 @@ public class KeycloakUserDTO {
     @NotBlank(message = "Address can not be blank.")
     private String address;
 
+    @NotNull(message = "Role is required.")
+    @Min(value = 1, message = "Role must be greater than zero.")
+    private Integer role;
+
     public KeycloakUserDTO() {
     }
 
     public KeycloakUserDTO(String username, String email, String password,
                            String firstName, String familyName,
-                           String phone, String address) {
+                           String phone, String address, Integer role) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -43,6 +47,7 @@ public class KeycloakUserDTO {
         this.familyName = familyName;
         this.phone = phone;
         this.address = address;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -99,5 +104,13 @@ public class KeycloakUserDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 }

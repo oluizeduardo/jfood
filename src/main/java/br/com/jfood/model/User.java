@@ -1,5 +1,6 @@
 package br.com.jfood.model;
 
+import br.com.jfood.dto.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,10 +20,14 @@ public class User {
     private String phone;
     private String address;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public User() {
     }
 
-    public User(Long id, String keycloakId, String name, String username, String email, String phone, String address) {
+    public User(Long id, String keycloakId, String name, String username, String email,
+                String phone, String address, Role role) {
         this.id = id;
         this.keycloakId = keycloakId;
         this.name = name;
@@ -30,6 +35,7 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.address = address;
+        this.role = role;
     }
 
     public Long getId() {
@@ -86,5 +92,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
