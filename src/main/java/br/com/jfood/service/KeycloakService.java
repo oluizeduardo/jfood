@@ -37,6 +37,8 @@ public class KeycloakService {
 
     private static final String MANAGEMENT_GROUP_NAME = "Management";
 
+    private static final String CUSTOMER_GROUP_NAME = "Customers";
+
     private final Keycloak keycloak;
 
     private final String realm;
@@ -93,9 +95,7 @@ public class KeycloakService {
                 case 201 -> {
                     String keycloakUserId = getUserId(response);
                     Role newUserRole = Role.fromValue(keycloakUserDTO.getRole());
-                    if (Role.ADMIN.equals(newUserRole)) {
-                        addUserInManagementGroup(keycloakUserId);
-                    }
+                    addUserInGroup(keycloakUserId, newUserRole);
                     yield keycloakUserId;
                 }
                 case 400 -> throw new RuntimeException("Invalid user data.");
@@ -113,8 +113,24 @@ public class KeycloakService {
         return CreatedResponseUtil.getCreatedId(response);
     }
 
+    private void addUserInGroup(String keycloakUserId, Role role) {
+        if (keycloakUserId == null || keycloakUserId.isBlank() || role == null) {
+            throw new RuntimeException("Impossible to add new user in a group. Received invalid keycloakUserId or role");
+        }
+        if (Role.ADMIN.equals(role)) {
+            addUserInManagementGroup(keycloakUserId);
+        } else if (Role.CUSTOMER.equals(role)) {
+            addUserInCustomerGroup(keycloakUserId);
+        }
+    }
+
     private void addUserInManagementGroup(String userId) {
         GroupRepresentation group = findGroupByName(MANAGEMENT_GROUP_NAME);
+        addUserInGroup(userId, group.getId());
+    }
+
+    private void addUserInCustomerGroup(String userId) {
+        GroupRepresentation group = findGroupByName(CUSTOMER_GROUP_NAME);
         addUserInGroup(userId, group.getId());
     }
 
