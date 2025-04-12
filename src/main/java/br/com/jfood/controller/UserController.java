@@ -1,10 +1,13 @@
 package br.com.jfood.controller;
 
 import br.com.jfood.dto.KeycloakUserDTO;
+import br.com.jfood.dto.PageResponseDTO;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.model.BaseResponse;
 import br.com.jfood.service.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -28,13 +33,14 @@ public class UserController {
         try {
             userService.save(keycloakUserDTO);
         } catch (Exception e) {
+            logger.warn("BAD REQUEST - {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(e.getMessage()));
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping
-    public Page<UserDTO> getAllUsers(Pageable pageable) {
+    public PageResponseDTO<UserDTO> getAllUsers(Pageable pageable) {
         return userService.findAll(pageable);
     }
 

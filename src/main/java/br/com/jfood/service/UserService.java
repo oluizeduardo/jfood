@@ -1,10 +1,13 @@
 package br.com.jfood.service;
 
 import br.com.jfood.dto.KeycloakUserDTO;
+import br.com.jfood.dto.PageResponseDTO;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
 import br.com.jfood.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,8 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
@@ -25,9 +30,12 @@ public class UserService {
         this.keycloakService = keycloakService;
     }
 
-    public Page<UserDTO> findAll(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public PageResponseDTO<UserDTO> findAll(Pageable pageable) {
+        logger.info("Finding all users.");
         Page<User> pageableUsers = userRepository.findAll(pageable);
-        return pageableUsers.map(userMapper::toDTO);
+        Page<UserDTO> dtoPage = pageableUsers.map(userMapper::toDTO);
+        return new PageResponseDTO<UserDTO>(dtoPage);
     }
 
     public UserDTO findUserById(Long id) {
@@ -35,14 +43,35 @@ public class UserService {
         return optionalUser.map(userMapper::toDTO).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     private Optional<User> findById(Long id) {
+        logger.info("Finding user by id [{}].", id);
         return userRepository.findById(id);
     }
 
     public void save(KeycloakUserDTO keycloakUserDTO) {
-        // Save user in Keycloak database.
-        String keycloakId = keycloakService.createUserInKeycloak(keycloakUserDTO);
-        // Save user's details in the application's database.
+        String keycloakId = saveUserInKeycloak(keycloakUserDTO);
+        if (keycloakId == null)
+            logger.warn("Impossible to save user in the application database, because keycloakId is null.");
+        else
+            saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakId);
+    }
+
+    private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
+        String keycloakId = null;
+        try {
+            logger.info("Saving user in Keycloak.");
+            keycloakId = keycloakService.createUserInKeycloak(keycloakUserDTO);
+        } catch (RuntimeException ex) {
+            logger.error(ex.getMessage());
+            return null;
+        }
+        return (keycloakId == null || keycloakId.isBlank()) ? null : keycloakId;
+    }
+
+    @Transactional
+    private void saveUserInTheApplicationDatabase(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
+        logger.info("Saving user in the application database.");
         userRepository.save(createUser(keycloakUserDTO, keycloakId));
     }
 
@@ -51,12 +80,23 @@ public class UserService {
         var idUser = userDTO.getId();
         if (keycloakUserId != null && idUser != null) {
             try {
-                keycloakService.deleteUserInKeycloak(keycloakUserId);
-                userRepository.deleteById(idUser);
+                deleteKeycloakUser(keycloakUserId);
+                deleteApplicationUser(idUser);
             } catch (Exception e) {
-                System.out.println("Error deleting user. Details: " + e.getMessage());
+                logger.warn("Error deleting user. Details: {}", e.getMessage());
             }
         }
+    }
+
+    public void deleteKeycloakUser(String keycloakUserId) {
+        logger.info("Deleting Keycloak user by keycloakUserId [{}].", keycloakUserId);
+        keycloakService.deleteUserInKeycloak(keycloakUserId);
+    }
+
+    @Transactional
+    public void deleteApplicationUser(Long idUser) {
+        logger.info("Deleting user from the application database by id [{}].", idUser);
+        userRepository.deleteById(idUser);
     }
 
     private User createUser(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
