@@ -1,6 +1,6 @@
 # JFood - API REST para Gerenciamento de Usuários e Cardápio
 
-JFood é uma API REST desenvolvida com **Java** e **Spring Boot**, que permite o gerenciamento de usuários e um cardápio de itens. Apenas usuários com papel de **ADMIN** podem cadastrar novos itens no cardápio.
+JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio de itens.
 
 ## 🚀 Tecnologias Utilizadas
 - **Java 21**
@@ -18,8 +18,13 @@ JFood é uma API REST desenvolvida com **Java** e **Spring Boot**, que permite o
    git clone https://github.com/seu-usuario/jfood.git
    cd jfood
    ```
+2. **Certifique-se de estar usando a versão 21 do Java:**
+   ```sh
+   java --version
+   ```
+   - Caso não esteja usando o Java 21, altere a variável de ambiente `JAVA_HOME` para a [versão 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html).
 
-2. **Compilar o projeto:**
+3. **Compilar o projeto:**
    ```sh
    mvn clean install
    ```
