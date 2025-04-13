@@ -5,11 +5,12 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
 ## 🚀 Tecnologias Utilizadas
 - **Java 21**
 - **Spring Boot 3.4.4**
+- **Spring Security**
+- **Spring Data JPA**
 - **Maven**
 - **PostgresSQL**
 - **Flyway**
 - **Keycloak**
-- **Spring Security**
 
 
 ## 🛠️ Instalação e Execução
@@ -18,21 +19,31 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
    git clone https://github.com/seu-usuario/jfood.git
    cd jfood
    ```
-2. **Certifique-se de estar usando a versão 21 do Java:**
+2. **Configure as variáveis de ambiente:**
+- Crie um arquivo `.env` com base no exemplo disponível e edite-o com suas credenciais e configurações desejadas:
    ```sh
-   java --version
-   ```
-   - Caso não esteja usando o Java 21, altere a variável de ambiente `JAVA_HOME` para a [versão 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html).
-
-3. **Compilar o projeto:**
-   ```sh
-   mvn clean install
+   cp .env.example .env
    ```
 
-3. **Executar a aplicação:**
+3. **Execute os serviços com Docker Compose:**
    ```sh
-   mvn spring-boot:run
+   docker-compose up -d
    ```
+
+3. **Acesse os serviços nos seguintes endereços:** :
+
+| Serviço     | URL                     | Usuário / Senha             |
+|-------------|-------------------------|------------------------------|
+| PostgreSQL  | http://localhost:5432   | conforme `.env`             |
+| PgAdmin     | http://localhost:7000   | conforme `.env`             |
+| Keycloak    | http://localhost:7001   | conforme `.env`             |
+| SonarQube   | http://localhost:7002   | admin / admin               |
+| Jenkins     | http://localhost:7003   | senha gerada no container   |
+
+4. **Para parar e remover os containers:**
+   ```sh
+   docker-compose down
+      ```
    
 ## Postman Collection
 - [Collection](https://documenter.getpostman.com/view/2828428/2sB2cVg2vU)
