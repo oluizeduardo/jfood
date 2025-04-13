@@ -30,17 +30,17 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
    docker-compose up -d
    ```
 
-3. **Acesse os serviços nos seguintes endereços:** :
+4. **Acesse os serviços nos seguintes endereços:** :
 
-| Serviço     | URL                     | Usuário / Senha             |
-|-------------|-------------------------|------------------------------|
-| PostgreSQL  | http://localhost:5432   | conforme `.env`             |
-| PgAdmin     | http://localhost:7000   | conforme `.env`             |
-| Keycloak    | http://localhost:7001   | conforme `.env`             |
-| SonarQube   | http://localhost:7002   | admin / admin               |
-| Jenkins     | http://localhost:7003   | senha gerada no container   |
+   | Serviço     | URL                     | Usuário / Senha             |
+   |-------------|-------------------------|------------------------------|
+   | PostgreSQL  | http://localhost:5432   | conforme `.env`             |
+   | PgAdmin     | http://localhost:7000   | conforme `.env`             |
+   | Keycloak    | http://localhost:7001   | conforme `.env`             |
+   | SonarQube   | http://localhost:7002   | admin / admin               |
+   | Jenkins     | http://localhost:7003   | senha gerada no container   |
 
-4. **Para parar e remover os containers:**
+5. **Para parar e remover os containers:**
    ```sh
    docker-compose down
       ```
