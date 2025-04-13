@@ -64,6 +64,18 @@ services:
     networks:
       - jfood_net
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: my-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "7004:15672"  # UI
+      - "5672:5672"   # Communication with apps
+    networks:
+      - jfood_net
+
 volumes:
   pg_data:
   jenkins_home:

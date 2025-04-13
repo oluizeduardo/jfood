@@ -32,6 +32,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- SPRING AMQP -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
 		<!-- SPRING VALIDATION -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
