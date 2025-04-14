@@ -1,11 +1,14 @@
 package br.com.jfood.service;
 
+import br.com.jfood.amqp.UserAMQPConfiguration;
 import br.com.jfood.dto.KeycloakUserDTO;
 import br.com.jfood.dto.PageResponseDTO;
 import br.com.jfood.dto.Role;
 import br.com.jfood.dto.UserDTO;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
+import br.com.jfood.model.UserEvent;
+import br.com.jfood.model.UserEventType;
 import br.com.jfood.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +27,14 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final KeycloakService keycloakService;
+    private final UserEventPublisherService userEventPublisher;
 
-    public UserService(UserMapper userMapper, UserRepository userRepository, KeycloakService keycloakService) {
+    public UserService(UserMapper userMapper, UserRepository userRepository,
+                       KeycloakService keycloakService, UserEventPublisherService userEventPublisher) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.keycloakService = keycloakService;
+        this.userEventPublisher = userEventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -62,6 +68,16 @@ public class UserService {
             throw new RuntimeException("Could not create Keycloak user, returned keycloakUserId null");
 
         saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakUserId);
+        publishMessageToQueue(keycloakUserId, keycloakUserDTO.getUsername(), UserEventType.CREATED);
+    }
+
+    private void publishMessageToQueue(String keycloakUserId, String username, UserEventType eventType) {
+        UserEvent event = new UserEvent(keycloakUserId, username);
+        if (eventType == UserEventType.CREATED) {
+            userEventPublisher.publishUserCreatedEvent(event);
+        } else if (eventType == UserEventType.DELETED) {
+            userEventPublisher.publishUserDeletedEvent(event);
+        }
     }
 
     private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
@@ -82,6 +98,7 @@ public class UserService {
             try {
                 deleteKeycloakUser(keycloakUserId);
                 deleteApplicationUser(idUser);
+                publishMessageToQueue(keycloakUserId, userDTO.getUsername(), UserEventType.DELETED);
             } catch (Exception e) {
                 logger.warn("Error deleting user. Details: {}", e.getMessage());
             }
