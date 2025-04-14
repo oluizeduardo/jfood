@@ -1,13 +1,11 @@
 package br.com.jfood.model;
 
-import java.io.Serializable;
-
-public class UserCreatedEvent {
+public class UserEvent {
 
     private final String keycloakUserId;
     private final String username;
 
-    public UserCreatedEvent(String keycloakUserId, String username) {
+    public UserEvent(String keycloakUserId, String username) {
         this.keycloakUserId = keycloakUserId;
         this.username = username;
     }

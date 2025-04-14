@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -24,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
  * </p>
  *
  * <p><strong>Exchange:</strong> {@value #EXCHANGE_NAME} <br>
- * <strong>Queue:</strong> {@value #QUEUE_NAME} <br>
- * <strong>Routing Key:</strong> {@value #ROUTING_KEY}</p>
+ * <strong>Queue:</strong> {@value #USER_CREATED_QUEUE_NAME} <br>
+ * <strong>Routing Key:</strong> {@value #USER_CREATED_ROUTING_KEY}</p>
  *
  * @author luiz_costa
  */
@@ -33,8 +34,12 @@ import org.springframework.context.annotation.Configuration;
 public class UserAMQPConfiguration {
 
     public static final String EXCHANGE_NAME = "user.exchange";
-    public static final String QUEUE_NAME = "user.created.queue";
-    public static final String ROUTING_KEY = "user.created";
+
+    public static final String USER_CREATED_QUEUE_NAME = "user.created.queue";
+    public static final String USER_CREATED_ROUTING_KEY = "user.created";
+
+    public static final String USER_DELETED_QUEUE_NAME = "user.deleted.queue";
+    public static final String USER_DELETED_ROUTING_KEY = "user.deleted";
 
     /**
      * Declares a topic exchange to route user-related messages.
@@ -52,20 +57,48 @@ public class UserAMQPConfiguration {
      * @return the Queue instance
      */
     @Bean
-    public Queue creteQueue() {
-        return new Queue(QUEUE_NAME, false);
+    @Qualifier("userCreatedQueue")
+    public Queue userCreatedQueue() {
+        return new Queue(USER_CREATED_QUEUE_NAME, false);
     }
 
     /**
-     * Binds the queue to the exchange using the specified routing key.
+     * Declares the queue that will receive user deletion events.
      *
-     * @param queue    the declared queue
-     * @param exchange the declared topic exchange
-     * @return the Binding instance
+     * @return the Queue instance
      */
     @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
+    @Qualifier("userDeletedQueue")
+    public Queue userDeletedQueue() {
+        return new Queue(USER_DELETED_QUEUE_NAME, false);
+    }
+
+    /**
+     * Creates a binding between the {@code userCreatedQueue} and the {@code user.exchange} exchange
+     * using the {@code user.created} routing key. This allows messages with the specified routing key
+     * to be routed to the user creation queue.
+     *
+     * @param queue    the queue to bind (userCreatedQueue)
+     * @param exchange the topic exchange to bind to
+     * @return the configured Binding instance
+     */
+    @Bean
+    public Binding bindingUserCreated(@Qualifier("userCreatedQueue") Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(USER_CREATED_ROUTING_KEY);
+    }
+
+    /**
+     * Creates a binding between the {@code userDeletedQueue} and the {@code user.exchange} exchange
+     * using the {@code user.deleted} routing key. This ensures that messages with this routing key
+     * are delivered to the user deletion queue.
+     *
+     * @param queue    the queue to bind (userDeletedQueue)
+     * @param exchange the topic exchange to bind to
+     * @return the configured Binding instance
+     */
+    @Bean
+    public Binding bindingUserDeleted(@Qualifier("userDeletedQueue") Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(USER_DELETED_ROUTING_KEY);
     }
 
     /**
