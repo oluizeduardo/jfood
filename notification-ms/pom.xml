@@ -12,7 +12,7 @@
 	
 	<groupId>br.com.jfood</groupId>
 	<artifactId>notification-ms</artifactId>
-	<version>1.0.0.0</version>
+	<version>1.0.0</version>
 	<name>notification-ms</name>
 	<description>JFood notification service</description>
 	
@@ -30,6 +30,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- SPRING AMQP -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 	</dependencies>
 
