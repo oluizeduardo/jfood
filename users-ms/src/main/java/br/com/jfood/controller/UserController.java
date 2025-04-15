@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
