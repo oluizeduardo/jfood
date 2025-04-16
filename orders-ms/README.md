@@ -56,3 +56,6 @@ cp .env.example .env
 # 4. Compile e execute a aplicação
 mvn spring-boot:run
 ```
+
+
+
