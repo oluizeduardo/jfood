@@ -1,52 +1,31 @@
 package br.com.jfood.dto;
 
-public class UserDTO {
+import jakarta.validation.constraints.*;
 
-    private Long id;
-    private String keycloakId;
-    private String name;
+public abstract class UserDTO {
+
+    @NotBlank(message = "Username can not be blank.")
+    @Size(min = 3, max = 100, message = "The name must be between 3 and 100 characters long.")
     private String username;
+
+    @NotBlank(message = "Email can not be blank.")
+    @Email(message = "Invalid e-mail.")
     private String email;
+
+    @NotBlank(message = "Phone can not be blank.")
     private String phone;
+
+    @NotBlank(message = "Address can not be blank.")
     private String address;
-    private String role;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String keycloakId, String name, String username, String email, String phone, String address, String role) {
-        this.id = id;
-        this.keycloakId = keycloakId;
-        this.name = name;
+    public UserDTO(String username, String email, String phone, String address) {
         this.username = username;
         this.email = email;
         this.phone = phone;
         this.address = address;
-        this.role = role;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getKeycloakId() {
-        return keycloakId;
-    }
-
-    public void setKeycloakId(String keycloakId) {
-        this.keycloakId = keycloakId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {
@@ -79,13 +58,5 @@ public class UserDTO {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

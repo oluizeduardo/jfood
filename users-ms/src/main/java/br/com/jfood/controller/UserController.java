@@ -2,7 +2,7 @@ package br.com.jfood.controller;
 
 import br.com.jfood.dto.KeycloakUserDTO;
 import br.com.jfood.dto.PageResponseDTO;
-import br.com.jfood.dto.UserDTO;
+import br.com.jfood.dto.DatabaseUserDTO;
 import br.com.jfood.model.BaseResponse;
 import br.com.jfood.service.UserService;
 import jakarta.validation.Valid;
@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -38,13 +39,13 @@ public class UserController {
     }
 
     @GetMapping
-    public PageResponseDTO<UserDTO> getAllUsers(Pageable pageable) {
+    public PageResponseDTO<DatabaseUserDTO> getAllUsers(Pageable pageable) {
         return userService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUserById(@PathVariable Long id) {
-        UserDTO foundUser = userService.findUserById(id);
+        DatabaseUserDTO foundUser = userService.findUserById(id);
         if (foundUser == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -55,7 +56,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
-        UserDTO foundUser = userService.findUserById(id);
+        DatabaseUserDTO foundUser = userService.findUserById(id);
         if (foundUser == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
@@ -67,7 +68,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody KeycloakUserDTO keycloakUserDTO) {
-        UserDTO updatedUser = userService.updateUser(id, keycloakUserDTO);
+        DatabaseUserDTO updatedUser = userService.updateUser(id, keycloakUserDTO);
         if (updatedUser == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

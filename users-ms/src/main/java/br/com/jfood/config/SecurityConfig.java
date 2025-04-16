@@ -57,9 +57,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users/register").hasRole(ROLE_MANAGER)
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole(ROLE_MANAGER)
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.POST, "/users-ms/users/register").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.PUT, "/users-ms/users/**").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.DELETE, "/users-ms/users/**").hasRole(ROLE_MANAGER)
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

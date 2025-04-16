@@ -1,10 +1,6 @@
 package br.com.jfood.service;
 
-import br.com.jfood.amqp.UserAMQPConfiguration;
-import br.com.jfood.dto.KeycloakUserDTO;
-import br.com.jfood.dto.PageResponseDTO;
-import br.com.jfood.dto.Role;
-import br.com.jfood.dto.UserDTO;
+import br.com.jfood.dto.*;
 import br.com.jfood.mapper.UserMapper;
 import br.com.jfood.model.User;
 import br.com.jfood.model.UserEvent;
@@ -38,14 +34,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponseDTO<UserDTO> findAll(Pageable pageable) {
+    public PageResponseDTO<DatabaseUserDTO> findAll(Pageable pageable) {
         logger.info("Finding all users.");
         Page<User> pageableUsers = userRepository.findAll(pageable);
-        Page<UserDTO> dtoPage = pageableUsers.map(userMapper::toDTO);
-        return new PageResponseDTO<UserDTO>(dtoPage);
+        Page<DatabaseUserDTO> dtoPage = pageableUsers.map(userMapper::toDTO);
+        return new PageResponseDTO<DatabaseUserDTO>(dtoPage);
     }
 
-    public UserDTO findUserById(Long id) {
+    public DatabaseUserDTO findUserById(Long id) {
         Optional<User> optionalUser = findById(id);
         return optionalUser.map(userMapper::toDTO).orElse(null);
     }
@@ -68,16 +64,26 @@ public class UserService {
             throw new RuntimeException("Could not create Keycloak user, returned keycloakUserId null");
 
         saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakUserId);
-        publishMessageToQueue(keycloakUserId, keycloakUserDTO.getUsername(), UserEventType.CREATED);
+        publishMessageToQueue(keycloakUserId, keycloakUserDTO, UserEventType.CREATED);
     }
 
-    private void publishMessageToQueue(String keycloakUserId, String username, UserEventType eventType) {
-        UserEvent event = new UserEvent(keycloakUserId, username);
-        if (eventType == UserEventType.CREATED) {
-            userEventPublisher.publishUserCreatedEvent(event);
-        } else if (eventType == UserEventType.DELETED) {
-            userEventPublisher.publishUserDeletedEvent(event);
+    private void publishMessageToQueue(String keycloakUserId, UserDTO userDTO, UserEventType eventType) {
+        try {
+            UserEvent event = createUserEvent(keycloakUserId, userDTO);
+            if (eventType == UserEventType.CREATED) {
+                userEventPublisher.publishUserCreatedEvent(event);
+            } else if (eventType == UserEventType.DELETED) {
+                userEventPublisher.publishUserDeletedEvent(event);
+            }
+        } catch (RuntimeException e) {
+            logger.warn(e.getMessage());
         }
+    }
+
+    private UserEvent createUserEvent(String keycloakUserId, UserDTO dto) throws RuntimeException {
+        if (dto == null || keycloakUserId.isBlank())
+            throw new RuntimeException("Could not create UserEvent, received invalid parameters");
+        return new UserEvent(keycloakUserId, dto.getUsername(), dto.getEmail());
     }
 
     private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
@@ -91,14 +97,14 @@ public class UserService {
         userRepository.save(createUser(keycloakUserDTO, keycloakId));
     }
 
-    public void delete(UserDTO userDTO) {
-        var keycloakUserId = userDTO.getKeycloakId();
-        var idUser = userDTO.getId();
+    public void delete(DatabaseUserDTO databaseUserDTO) {
+        var keycloakUserId = databaseUserDTO.getKeycloakId();
+        var idUser = databaseUserDTO.getId();
         if (keycloakUserId != null && idUser != null) {
             try {
                 deleteKeycloakUser(keycloakUserId);
                 deleteApplicationUser(idUser);
-                publishMessageToQueue(keycloakUserId, userDTO.getUsername(), UserEventType.DELETED);
+                publishMessageToQueue(keycloakUserId, databaseUserDTO, UserEventType.DELETED);
             } catch (Exception e) {
                 logger.warn("Error deleting user. Details: {}", e.getMessage());
             }
@@ -133,7 +139,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateUser(Long id, KeycloakUserDTO keycloakUserDTO) {
+    public DatabaseUserDTO updateUser(Long id, KeycloakUserDTO keycloakUserDTO) {
         Optional<User> optionalUser = findById(id);
         if (optionalUser.isEmpty()) {
             return null;
