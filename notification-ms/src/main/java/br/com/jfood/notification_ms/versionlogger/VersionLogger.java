@@ -1,4 +1,4 @@
-package br.com.jfood.versionlogger;
+package br.com.jfood.notification_ms.versionlogger;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,9 @@ public class VersionLogger {
     @PostConstruct
     private void postConstruct() {
         final String CURRENT_NUMBER_VERSION = "1.0.0";
-        final String CURRENT_DATE_VERSION = "14-Apr-2025";
+        final String CURRENT_DATE_VERSION = "15-Apr-2025";
 
-        System.out.println("JFOOD - STARTING - Version: "
+        System.out.println("JFOOD - NOTIFICATION-MS - STARTING - Version: "
                 + CURRENT_NUMBER_VERSION + " - " + CURRENT_DATE_VERSION);
     }
 
