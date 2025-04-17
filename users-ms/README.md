@@ -49,10 +49,14 @@ Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot*
 # 1. Clone o repositório.
 git clone https://github.com/oluizeduardo/jfood.git
 
-# 2. Acesse a pasta do serviço.
+# 2. Inicie o Eureka Service Registry.
+cd jfood/service-registry-ms
+mvn spring-boot:run
+
+# 3. Acesse a pasta do serviço.
 cd jfood/users-ms
 
-# 3. Compile e execute a aplicação.
+# 4. Compile e execute a aplicação.
 # As migrações do Flyway vão executar automaticamente ao subir a aplicação
 mvn spring-boot:run
 ```
