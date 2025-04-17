@@ -41,36 +41,25 @@ Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot*
 - `service` – Contém a lógica de negócio e orquestra as operações do sistema
 - `versionlogger` – Componente responsável por exibir logs com informações da versão da aplicação durante a inicialização
 
-
 ---
 
-## 🛠️ Configuração e Execução
-
-### Pré-requisitos
-
-- Java 21
-- Maven 3.x
-- PostgreSQL
-- Instância do Keycloak configurada
-
-### Rodando localmente
+## ⚙️ Executando localmente
 
 ```bash
-# 1. Clone o repositório
+# 1. Clone o repositório.
 git clone https://github.com/oluizeduardo/jfood.git
 
-# 2. Acesse a pasta do serviço de usuários.
+# 2. Inicie o Eureka Service Registry.
+cd jfood/service-registry-ms
+mvn spring-boot:run
+
+# 3. Acesse a pasta do serviço.
 cd jfood/users-ms
 
-# 3. Configure as variáveis de ambiente:
-# Crie um arquivo .env com base no exemplo disponível e edite-o com suas credenciais e configurações desejadas:
-cp .env.example .env
-
-# 4. Compile e execute a aplicação
+# 4. Compile e execute a aplicação.
 # As migrações do Flyway vão executar automaticamente ao subir a aplicação
 mvn spring-boot:run
 ```
-
 ---
 
 ## 📬 Postman Collection
@@ -80,4 +69,3 @@ Para facilitar o teste e a exploração dos endpoints do serviço **Users-MS**, 
 - 👉 [Acessar Collection no Postman](https://documenter.getpostman.com/view/2828428/2sB2cVg2vU)
 
 > 💡 A collection inclui exemplos de requisições para cadastro, consulta, exclusão de usuários e integração com o Keycloak.
-

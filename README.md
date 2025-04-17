@@ -7,10 +7,12 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
 - **Spring Boot 3.4.4**
 - **Spring Security**
 - **Spring Data JPA**
+- **Spring Eureka**
 - **Maven**
 - **PostgresSQL**
 - **Flyway**
 - **Keycloak**
+- **Docker**
 
 
 ## 🛠️ Instalação e Execução
