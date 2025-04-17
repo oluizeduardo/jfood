@@ -46,13 +46,13 @@ Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot*
 ## ⚙️ Executando localmente
 
 ```bash
-# 1. Clone o repositório
+# 1. Clone o repositório.
 git clone https://github.com/oluizeduardo/jfood.git
 
-# 2. Acesse a pasta do serviço de usuários.
+# 2. Acesse a pasta do serviço.
 cd jfood/users-ms
 
-# 3. Compile e execute a aplicação
+# 3. Compile e execute a aplicação.
 # As migrações do Flyway vão executar automaticamente ao subir a aplicação
 mvn spring-boot:run
 ```
