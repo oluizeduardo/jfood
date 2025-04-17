@@ -4,15 +4,6 @@ Este projeto é um **Service Registry** criado com **Spring Cloud Eureka Server*
 
 ---
 
-## 🚀 Tecnologias Utilizadas
-
-- Java 21
-- Spring Boot
-- Spring Cloud Netflix Eureka Server
-- Maven
-
----
-
 ## 📦 Objetivo
 
 Este serviço permite que microsserviços se registrem dinamicamente e descubram uns aos outros, promovendo **desacoplamento**, **escalabilidade** e **tolerância a falhas** dentro da arquitetura.
