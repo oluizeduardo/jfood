@@ -1,4 +1,4 @@
-package br.com.jfood.service_registry_ms.versionlogger;
+package br.com.jfood.api_gateway.versionlogger;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class VersionLogger {
         final String CURRENT_NUMBER_VERSION = "1.0.0";
         final String CURRENT_DATE_VERSION = "18-Apr-2025";
 
-        logger.info("JFOOD - SERVICE-REGISTRY-MS - STARTING - Version: {} - {}", CURRENT_NUMBER_VERSION, CURRENT_DATE_VERSION);
+        logger.info("JFOOD - API GATEWAY - STARTING - Version: {} - {}", CURRENT_NUMBER_VERSION, CURRENT_DATE_VERSION);
     }
 
 }

@@ -23,7 +23,7 @@ public class VersionLogger {
     @PostConstruct
     private void postConstruct() {
         final String CURRENT_NUMBER_VERSION = "1.0.0";
-        final String CURRENT_DATE_VERSION = "16-Apr-2025";
+        final String CURRENT_DATE_VERSION = "18-Apr-2025";
 
         logger.info("JFOOD - USERS-MS - STARTING - Version: {} - {}", CURRENT_NUMBER_VERSION, CURRENT_DATE_VERSION);
     }
