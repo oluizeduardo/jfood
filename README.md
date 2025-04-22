@@ -9,10 +9,11 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
 - **Spring Data JPA**
 - **Spring Eureka**
 - **Maven**
-- **PostgresSQL**
+- **PostgreSQL**
 - **Flyway**
 - **Keycloak**
 - **Docker**
+- **RabbitMQ**
 
 
 ## 🛠️ Instalação e Execução
@@ -32,7 +33,7 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
    docker-compose up -d
    ```
 
-4. **Acesse os serviços nos seguintes endereços:** :
+4. **Acesse os serviços nos seguintes endereços:**
 
    | Serviço     | URL                     | Usuário / Senha             |
    |-------------|-------------------------|------------------------------|
@@ -49,3 +50,6 @@ JFood é uma aplicação que permite o gerenciamento de usuários e um cardápio
    
 ## Postman Collection
 - [Collection](https://documenter.getpostman.com/view/2828428/2sB2cVg2vU)
+
+## Arquitetura
+![](imgs/JFood-architecture.PNG)
