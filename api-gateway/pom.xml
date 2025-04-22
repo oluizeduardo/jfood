@@ -12,7 +12,7 @@
 
     <groupId>br.com.jfood</groupId>
     <artifactId>api-gateway</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>api-gateway</name>
     <description>Reactive Gateway for Centralized Routing via Eureka</description>
 
@@ -22,11 +22,14 @@
     </properties>
 
     <dependencies>
+
+        <!-- SPRING GATEWAY -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
+        <!-- EUREKA CLIENT -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -44,6 +47,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- SPRING ACTUATOR - MONITORING -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
