@@ -19,7 +19,7 @@
 *.tar.gz
 *.rar
 
-mvn*
+#mvn*
 .mvn
 .idea
 .gitattributes
