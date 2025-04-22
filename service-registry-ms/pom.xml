@@ -14,7 +14,7 @@
     <artifactId>service-registry-ms</artifactId>
     <version>1.0.0</version>
     <name>service-registry-ms</name>
-    <description>Service Registry</description>
+    <description>Service Registry - Eureka Server</description>
 
     <properties>
         <java.version>21</java.version>
