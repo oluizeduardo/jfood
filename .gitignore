@@ -20,7 +20,7 @@
 *.rar
 
 #mvn*
-.mvn
+#.mvn
 .idea
 .gitattributes
 target
