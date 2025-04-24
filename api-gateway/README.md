@@ -7,9 +7,9 @@ Este é o serviço **API Gateway** do projeto **jFood**, responsável por atuar 
 
 > Atenção à ordem de inicialização dos serviços para garantir o funcionamento correto:
 
-1. [Eureka Server (service-registry)](https://github.com/oluizeduardo/jfood/tree/main/service-registry-ms)
+1. [Service Registry - Eureka Server](https://github.com/oluizeduardo/jfood/tree/main/ms-service-registry)
 2. API Gateway (api-gateway)
-3. Demais microsserviços (ex: users-ms, notification-ms, etc.)
+3. Demais microsserviços (ex: ms-users, ms-notification, etc.)
 ---
 
 ## 🛠️ Execução

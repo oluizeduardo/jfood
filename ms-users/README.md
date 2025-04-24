@@ -1,6 +1,6 @@
-# 📦 Users-MS
+# 📦 ms-users
 
-**Users-MS** é um microserviço responsável pela gestão de usuários dentro da aplicação **JFood**. Ele oferece funcionalidades como cadastro, consulta e exclusão de usuários, além de realizar a integração com o **Keycloak** para registro e autenticação.
+Microsserviço responsável pela gestão de usuários dentro da aplicação **JFood**. Ele oferece funcionalidades como cadastro, consulta e exclusão de usuários, além de realizar a integração com o **Keycloak** para registro e autenticação.
 
 Este microserviço é parte essencial da arquitetura distribuída da aplicação **JFood**, garantindo o gerenciamento seguro e eficiente dos usuários.
 
@@ -50,11 +50,11 @@ Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot*
 git clone https://github.com/oluizeduardo/jfood.git
 
 # 2. Inicie o Eureka Service Registry.
-cd jfood/service-registry-ms
+cd jfood/ms-service-registry
 mvn spring-boot:run
 
 # 3. Acesse a pasta do serviço.
-cd jfood/users-ms
+cd jfood/ms-users
 
 # 4. Compile e execute a aplicação.
 # As migrações do Flyway vão executar automaticamente ao subir a aplicação
