@@ -11,9 +11,9 @@
 	</parent>
 	
 	<groupId>br.com.jfood</groupId>
-	<artifactId>notification-ms</artifactId>
+	<artifactId>ms-notification</artifactId>
 	<version>1.0.0</version>
-	<name>notification-ms</name>
+	<name>ms-notification</name>
 	<description>JFood notification service</description>
 	
 	<properties>

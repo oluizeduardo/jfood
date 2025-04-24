@@ -1,6 +1,6 @@
-# 📬 Notification-MS
+# 📬 ms-notification
 
-**Notification-MS** é um microserviço da aplicação **JFood** responsável por gerenciar o envio de **notificações por e-mail**. Ele opera de forma reativa, consumindo eventos da fila do **RabbitMQ** para realizar comunicações automáticas com os usuários.
+Microserviço da aplicação **JFood** responsável por gerenciar o envio de **notificações por e-mail**. Ele opera de forma reativa, consumindo eventos da fila do **RabbitMQ** para realizar comunicações automáticas com os usuários.
 
 Este serviço atua exclusivamente como um consumidor da fila, e só realiza envios de e-mails quando os eventos são processados com sucesso.
 
@@ -43,7 +43,7 @@ Este serviço atua exclusivamente como um consumidor da fila, e só realiza envi
 git clone https://github.com/oluizeduardo/jfood.git
 
 # 2. Acesse a pasta do serviço de usuários.
-cd jfood/notification-ms
+cd jfood/ms-notification
 
 # 3. Configure as variáveis de ambiente:
 # Crie um arquivo .env com base no exemplo disponível e edite-o com suas credenciais e configurações desejadas:

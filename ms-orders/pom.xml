@@ -11,9 +11,9 @@
 	</parent>
 	
 	<groupId>br.com.jfood</groupId>
-	<artifactId>orders-ms</artifactId>
+	<artifactId>ms-orders</artifactId>
 	<version>1.0.0</version>
-	<name>orders-ms</name>
+	<name>ms-orders</name>
 	<description>JFood orders service</description>
 
 	<properties>
