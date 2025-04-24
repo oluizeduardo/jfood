@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>br.com.jfood</groupId>
-    <artifactId>users-ms</artifactId>
+    <artifactId>ms-users</artifactId>
     <version>1.0.0</version>
-    <name>users-ms</name>
+    <name>ms-users</name>
     <description>Restaurant management project.</description>
 
 	<properties>

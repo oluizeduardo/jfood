@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>br.com.jfood</groupId>
-    <artifactId>service-registry-ms</artifactId>
+    <artifactId>ms-service-registry</artifactId>
     <version>1.0.0</version>
-    <name>service-registry-ms</name>
+    <name>ms-service-registry</name>
     <description>Service Registry - Eureka Server</description>
 
     <properties>
