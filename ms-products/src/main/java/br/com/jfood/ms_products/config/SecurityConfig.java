@@ -2,6 +2,7 @@ package br.com.jfood.ms_products.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -24,7 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * <p><strong>Key features:</strong></p>
  * <ul>
  *     <li>Enables method-level security via {@code @EnableMethodSecurity}</li>
- *     <li>Restricts access to user-related endpoints to users with the {@code MANAGER} role</li>
+ *     <li>Restricts access to product-related endpoints to users with the {@code MANAGER} role</li>
  *     <li>Integrates with Keycloak using JWT tokens</li>
  *     <li>Uses a custom converter to extract roles from the Keycloak JWT token</li>
  * </ul>
@@ -43,7 +44,7 @@ public class SecurityConfig {
      * <p>
      * It enforces the following security rules:
      * <ul>
-     *     <li>Only users with the {@code MANAGER} role can register, update, or delete users</li>
+     *     <li>Only users with the {@code MANAGER} role can register, update, or delete products</li>
      *     <li>All other endpoints require authentication</li>
      *     <li>Authentication is done via OAuth2 JWT tokens</li>
      *     <li>Session management is stateless</li>
@@ -57,10 +58,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/products-ms/products").hasRole(ROLE_MANAGER)
-                        .requestMatchers(HttpMethod.PUT, "/products-ms/users/**").hasRole(ROLE_MANAGER)
-                        .requestMatchers(HttpMethod.DELETE, "/products-ms/users/**").hasRole(ROLE_MANAGER)
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/ms-products/products").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.PUT, "/ms-products/products/**").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.DELETE, "/ms-products/products/**").hasRole(ROLE_MANAGER)
+                        .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
