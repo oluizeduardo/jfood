@@ -95,8 +95,11 @@ public class ProductService {
         }
 
         Product foundProduct = optionalProduct.get();
-        foundProduct.setDescription(dto.getDescription());
-        foundProduct.setPrice(dto.getPrice());
+        if (dto.getDescription() != null)
+            foundProduct.setDescription(dto.getDescription());
+        if (dto.getPrice() != null)
+            foundProduct.setPrice(dto.getPrice());
+
         return ResponseEntity.ok(foundProduct);
     }
 
