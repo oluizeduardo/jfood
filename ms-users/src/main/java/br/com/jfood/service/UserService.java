@@ -2,6 +2,7 @@ package br.com.jfood.service;
 
 import br.com.jfood.dto.*;
 import br.com.jfood.mapper.UserMapper;
+import br.com.jfood.model.BaseResponse;
 import br.com.jfood.model.User;
 import br.com.jfood.model.UserEvent;
 import br.com.jfood.model.UserEventType;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +28,47 @@ public class UserService {
     private final KeycloakService keycloakService;
     private final UserEventPublisherService userEventPublisher;
 
-    public UserService(UserMapper userMapper, UserRepository userRepository,
-                       KeycloakService keycloakService, UserEventPublisherService userEventPublisher) {
+    public UserService(UserMapper userMapper, UserRepository userRepository, KeycloakService keycloakService,
+                       UserEventPublisherService userEventPublisher) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.keycloakService = keycloakService;
         this.userEventPublisher = userEventPublisher;
+    }
+
+    @Transactional
+    public ResponseEntity<Object> add(KeycloakUserDTO keycloakUserDTO) {
+        String keycloakUserId = null;
+        try {
+            keycloakUserId = saveUserInKeycloak(keycloakUserDTO);
+        } catch (RuntimeException e) {
+            logger.warn("BAD REQUEST - {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(e.getMessage()));
+        }
+
+        if (keycloakUserId == null || keycloakUserId.isBlank()) {
+            String baseMessage = "Could not create Keycloak user";
+            logger.warn("{}, returned invalid keycloakUserId.", baseMessage);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseResponse(baseMessage));
+        }
+
+        User user = createUser(keycloakUserDTO, keycloakUserId);
+
+        saveUserInTheApplicationDatabase(user);
+        publishMessageToQueue(user, UserEventType.CREATED);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(user));
+    }
+
+    private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
+        logger.info("Saving user in Keycloak.");
+        return keycloakService.createUserInKeycloak(keycloakUserDTO);
+    }
+
+    @Transactional
+    private void saveUserInTheApplicationDatabase(User user) {
+        logger.info("Saving user in the application database.");
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
@@ -41,35 +79,51 @@ public class UserService {
         return new PageResponseDTO<DatabaseUserDTO>(dtoPage);
     }
 
-    public DatabaseUserDTO findUserById(Long id) {
-        Optional<User> optionalUser = findById(id);
-        return optionalUser.map(userMapper::toDTO).orElse(null);
-    }
-
     @Transactional(readOnly = true)
-    private Optional<User> findById(Long id) {
-        logger.info("Finding user by id [{}].", id);
+    private Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public void save(KeycloakUserDTO keycloakUserDTO) {
-        String keycloakUserId = null;
-        try {
-            keycloakUserId = saveUserInKeycloak(keycloakUserDTO);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+    @Transactional(readOnly = true)
+    public ResponseEntity<Object> findById(Long id) {
+        if (id == null) return badRequest("User id not informed");
+
+        logger.info("Finding user by id: [{}].", id);
+        Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isEmpty()) {
+            logUserNotFound(id);
+            return userNotFound();
         }
-
-        if (keycloakUserId == null || keycloakUserId.isBlank())
-            throw new RuntimeException("Could not create Keycloak user, returned keycloakUserId null");
-
-        saveUserInTheApplicationDatabase(keycloakUserDTO, keycloakUserId);
-        publishMessageToQueue(keycloakUserId, keycloakUserDTO, UserEventType.CREATED);
+        return ResponseEntity.ok(optionalUser.map(userMapper::toDTO));
     }
 
-    private void publishMessageToQueue(String keycloakUserId, UserDTO userDTO, UserEventType eventType) {
+    public ResponseEntity<Object> delete(Long id) {
+        if (id == null) return badRequest("User id not informed");
+
+        logger.info("Deleting user by id: [{}].", id);
+        Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isEmpty()) {
+            logUserNotFound(id);
+            return userNotFound();
+        }
+
+        User foundUser = optionalUser.get();
+        var keycloakUserId = foundUser.getKeycloakId();
+        var idUser = foundUser.getId();
+
         try {
-            UserEvent event = createUserEvent(keycloakUserId, userDTO);
+            deleteKeycloakUser(keycloakUserId);
+            deleteApplicationUser(idUser);
+            publishMessageToQueue(foundUser, UserEventType.DELETED);
+        } catch (Exception e) {
+            logger.warn("Error deleting user. Details: {}", e.getMessage());
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    private void publishMessageToQueue(User user, UserEventType eventType) {
+        try {
+            UserEvent event = createUserEvent(user);
             if (eventType == UserEventType.CREATED) {
                 userEventPublisher.publishUserCreatedEvent(event);
             } else if (eventType == UserEventType.DELETED) {
@@ -80,35 +134,10 @@ public class UserService {
         }
     }
 
-    private UserEvent createUserEvent(String keycloakUserId, UserDTO dto) throws RuntimeException {
-        if (dto == null || keycloakUserId.isBlank())
-            throw new RuntimeException("Could not create UserEvent, received invalid parameters");
-        return new UserEvent(keycloakUserId, dto.getUsername(), dto.getEmail());
-    }
-
-    private String saveUserInKeycloak(KeycloakUserDTO keycloakUserDTO) {
-        logger.info("Saving user in Keycloak.");
-        return keycloakService.createUserInKeycloak(keycloakUserDTO);
-    }
-
-    @Transactional
-    private void saveUserInTheApplicationDatabase(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
-        logger.info("Saving user in the application database.");
-        userRepository.save(createUser(keycloakUserDTO, keycloakId));
-    }
-
-    public void delete(DatabaseUserDTO databaseUserDTO) {
-        var keycloakUserId = databaseUserDTO.getKeycloakId();
-        var idUser = databaseUserDTO.getId();
-        if (keycloakUserId != null && idUser != null) {
-            try {
-                deleteKeycloakUser(keycloakUserId);
-                deleteApplicationUser(idUser);
-                publishMessageToQueue(keycloakUserId, databaseUserDTO, UserEventType.DELETED);
-            } catch (Exception e) {
-                logger.warn("Error deleting user. Details: {}", e.getMessage());
-            }
-        }
+    private UserEvent createUserEvent(User user) throws RuntimeException {
+        if (user == null || user.getKeycloakId().isBlank())
+            throw new RuntimeException("Could not create UserEvent, received invalid user data");
+        return new UserEvent(user.getKeycloakId(), user.getUsername(), user.getEmail());
     }
 
     public void deleteKeycloakUser(String keycloakUserId) {
@@ -120,6 +149,40 @@ public class UserService {
     public void deleteApplicationUser(Long idUser) {
         logger.info("Deleting user from the application database by id [{}].", idUser);
         userRepository.deleteById(idUser);
+    }
+
+    @Transactional
+    public ResponseEntity<Object> update(Long id, KeycloakUserDTO dto) {
+        if (id == null || dto == null)
+            return badRequest("Invalid request");
+
+        Optional<User> optionalUser = findUserById(id);
+        if (optionalUser.isEmpty()) {
+            logUserNotFound(id);
+            return userNotFound();
+        }
+
+        User user = optionalUser.get();
+
+        // Try updating in Keycloak first.
+        try {
+            keycloakService.updateUserInKeycloak(user.getKeycloakId(), dto);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+
+        // Update user in the application's database.
+        if (dto.getFirstName() != null && dto.getFamilyName() != null)
+            user.setName(adjustName(dto.getFirstName(), dto.getFamilyName()));
+        if (dto.getAddress() != null)
+            user.setAddress(dto.getAddress());
+        if (dto.getEmail() != null)
+            user.setEmail(dto.getEmail());
+        if (dto.getPhone() != null)
+            user.setPhone(dto.getPhone());
+
+        return ResponseEntity.ok(user);
     }
 
     private User createUser(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
@@ -138,29 +201,16 @@ public class UserService {
         return firstname + " " + familyName;
     }
 
-    @Transactional
-    public DatabaseUserDTO updateUser(Long id, KeycloakUserDTO keycloakUserDTO) {
-        Optional<User> optionalUser = findById(id);
-        if (optionalUser.isEmpty()) {
-            return null;
-        }
+    private ResponseEntity<Object> userNotFound() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponse("User not found."));
+    }
 
-        User user = optionalUser.get();
+    private void logUserNotFound(Long id) {
+        logger.info("User not found ID: [{}].", id);
+    }
 
-        // Try updating in Keycloak first.
-        try {
-            keycloakService.updateUserInKeycloak(user.getKeycloakId(), keycloakUserDTO);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-
-        // Update user in the application's database.
-        user.setName(adjustName(keycloakUserDTO.getFirstName(), keycloakUserDTO.getFamilyName()));
-        user.setAddress(keycloakUserDTO.getAddress());
-        user.setEmail(keycloakUserDTO.getEmail());
-        user.setPhone(keycloakUserDTO.getPhone());
-
-        return userMapper.toDTO(user);
+    private ResponseEntity<Object> badRequest(String message) {
+        message = (message == null || message.isEmpty()) ? "Bad Request" : message;
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(message));
     }
 }

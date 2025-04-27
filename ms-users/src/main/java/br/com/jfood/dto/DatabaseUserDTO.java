@@ -1,5 +1,7 @@
 package br.com.jfood.dto;
 
+import br.com.jfood.model.User;
+
 public class DatabaseUserDTO extends UserDTO {
 
     private Long id;
