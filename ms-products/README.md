@@ -6,9 +6,9 @@ O serviço oferece endpoints públicos e privados, permitindo tanto a listagem a
 
 ## ⚙️ Funcionalidades
 
-- 📋 Listagem pública de produtos disponíveis (GET /products) — não requer autenticação
+- 📋 Listagem pública de produtos disponíveis (`GET /products`) — não requer autenticação
 
-- 🔎 Consulta de detalhes de um produto específico (GET /products/{id}) — requer autenticação
+- 🔎 Consulta de detalhes de um produto específico (`GET /products/{id}`) — requer autenticação
 
 - 🛠️ Cadastro, atualização e exclusão de produtos — requer autenticação
 
