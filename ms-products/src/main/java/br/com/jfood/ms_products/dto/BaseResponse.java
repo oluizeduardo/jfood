@@ -1,4 +1,4 @@
-package br.com.jfood.ms_products.model;
+package br.com.jfood.ms_products.dto;
 
 public record BaseResponse(String message) {
 }
