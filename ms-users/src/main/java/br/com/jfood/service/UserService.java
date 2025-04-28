@@ -183,7 +183,7 @@ public class UserService {
         if (dto.getPhone() != null)
             user.setPhone(dto.getPhone());
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper.toDTO(user));
     }
 
     private User createUser(KeycloakUserDTO keycloakUserDTO, String keycloakId) {
