@@ -168,8 +168,9 @@ public class UserService {
         try {
             keycloakService.updateUserInKeycloak(user.getKeycloakId(), dto);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return null;
+            logger.error("Error updating user in Keycloak: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BaseResponse("Error updating user"));
         }
 
         // Update user in the application's database.
