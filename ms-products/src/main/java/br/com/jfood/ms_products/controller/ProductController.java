@@ -40,11 +40,13 @@ public class ProductController {
         return productService.findById(id);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProduct(@PathVariable Long id) {
         return productService.delete(id);
     }
 
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable Long id, @RequestBody ProductRequestDTO productRequestDTO) {
         return productService.update(id, productRequestDTO);
