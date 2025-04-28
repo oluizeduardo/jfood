@@ -2,13 +2,9 @@
 
 Este projeto é um **Service Registry** criado com **Spring Cloud Eureka Server**, responsável por registrar e manter a descoberta de serviços do ambiente de microsserviços do JFood.
 
----
-
 ## 📦 Objetivo
 
 Este serviço permite que microsserviços se registrem dinamicamente e descubram uns aos outros, promovendo **desacoplamento**, **escalabilidade** e **tolerância a falhas** dentro da arquitetura.
-
----
 
 ## ⚙️ Executando localmente
 

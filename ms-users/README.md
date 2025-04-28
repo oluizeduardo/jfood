@@ -4,29 +4,12 @@ Microsserviço responsável pela gestão de usuários dentro da aplicação **JF
 
 Este microserviço é parte essencial da arquitetura distribuída da aplicação **JFood**, garantindo o gerenciamento seguro e eficiente dos usuários.
 
----
-
 ## ⚙️ Funcionalidades
 
 - 📋 Cadastro de novos usuários
 - 🔍 Consulta de usuários por ID
 - ❌ Exclusão de usuários
 - 🔐 Cadastro automático de usuários no **Keycloak** para autenticação e autorização
-
----
-
-## 🚀 Tecnologias Utilizadas
-
-- **Java 21**
-- **Spring Boot 3.4.4**
-- **Spring Security**
-- **Spring Data JPA**
-- **Maven**
-- **PostgreSQL**
-- **Flyway**
-- **Keycloak**
-
----
 
 ## 🧱 Estrutura de Pacotes
 
@@ -40,8 +23,6 @@ Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot*
 - `repository` – Interfaces de acesso a dados, utilizando o **Spring Data JPA**
 - `service` – Contém a lógica de negócio e orquestra as operações do sistema
 - `versionlogger` – Componente responsável por exibir logs com informações da versão da aplicação durante a inicialização
-
----
 
 ## ⚙️ Executando localmente
 
