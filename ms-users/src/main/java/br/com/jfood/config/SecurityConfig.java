@@ -57,13 +57,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users/register").hasRole(ROLE_MANAGER)
+                        .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole(ROLE_MANAGER)
                         .requestMatchers(HttpMethod.PUT, "/users/**").hasRole(ROLE_MANAGER)
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole(ROLE_MANAGER)
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
-
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
