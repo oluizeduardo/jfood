@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,7 @@ public class Order {
     @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount", nullable = false, precision = 9, scale = 2)
     private BigDecimal totalAmount;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -74,6 +75,7 @@ public class Order {
     }
 
     public void setItems(List<OrderItem> items) {
+        this.items = (items == null) ? null : new ArrayList<>(items);
         // Clear previous bidirectional references
         if (this.items != null) {
             this.items.forEach(item -> item.setOrder(null));
