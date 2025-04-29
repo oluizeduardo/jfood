@@ -3,7 +3,7 @@ package br.com.jfood.ms_products.service;
 import br.com.jfood.ms_products.dto.PageResponseDTO;
 import br.com.jfood.ms_products.dto.ProductRequestDTO;
 import br.com.jfood.ms_products.dto.ProductResponseDTO;
-import br.com.jfood.ms_products.model.BaseResponse;
+import br.com.jfood.ms_products.dto.BaseResponse;
 import br.com.jfood.ms_products.model.Product;
 import br.com.jfood.ms_products.repository.ProductRepository;
 import org.slf4j.Logger;
