@@ -117,7 +117,7 @@ public class KeycloakService {
         if (keycloakUserId == null || keycloakUserId.isBlank() || role == null) {
             throw new RuntimeException("Impossible to add new user in a group. Received invalid keycloakUserId or role");
         }
-        if (Role.ADMIN.equals(role)) {
+        if (Role.MANAGER.equals(role)) {
             addUserInManagementGroup(keycloakUserId);
         } else if (Role.CUSTOMER.equals(role)) {
             addUserInCustomerGroup(keycloakUserId);

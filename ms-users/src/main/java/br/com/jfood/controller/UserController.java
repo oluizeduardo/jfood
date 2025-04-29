@@ -24,8 +24,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<Object> addUser(@RequestBody @Valid KeycloakUserDTO keycloakUserDTO) {
         return userService.add(keycloakUserDTO);
     }

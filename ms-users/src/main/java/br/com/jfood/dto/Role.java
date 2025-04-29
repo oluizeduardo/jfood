@@ -2,7 +2,7 @@ package br.com.jfood.dto;
 
 public enum Role {
 
-    ADMIN(1),
+    MANAGER(1),
     CUSTOMER(2);
 
     private final int value;
