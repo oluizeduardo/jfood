@@ -135,7 +135,7 @@ public class OrderService {
         }
 
         Order updatedOrder = orderRepository.save(existingOrder);
-        return ResponseEntity.ok(updatedOrder);
+        return ResponseEntity.ok(buildOrderDTO(updatedOrder));
     }
 
     @Transactional(readOnly = true)
