@@ -1,4 +1,4 @@
-package br.com.jfood.orders_ms.config;
+package br.com.jfood.ms_orders.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

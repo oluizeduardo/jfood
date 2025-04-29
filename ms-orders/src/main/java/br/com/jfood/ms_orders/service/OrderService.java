@@ -1,9 +1,9 @@
-package br.com.jfood.orders_ms.service;
+package br.com.jfood.ms_orders.service;
 
-import br.com.jfood.orders_ms.dto.*;
-import br.com.jfood.orders_ms.model.Order;
-import br.com.jfood.orders_ms.model.OrderItem;
-import br.com.jfood.orders_ms.repository.OrderRepository;
+import br.com.jfood.ms_orders.dto.*;
+import br.com.jfood.ms_orders.model.Order;
+import br.com.jfood.ms_orders.model.OrderItem;
+import br.com.jfood.ms_orders.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -38,7 +38,8 @@ public class OrderService {
         }
         logger.info("Saving new order.");
         Order savedOrder = orderRepository.save(buildOrder(dto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
+        PurchaseOrderResponseDTO response = buildOrderDTO(savedOrder);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Transactional(readOnly = true)

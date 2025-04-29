@@ -1,6 +1,6 @@
-package br.com.jfood.orders_ms.dto;
+package br.com.jfood.ms_orders.dto;
 
-import br.com.jfood.orders_ms.model.OrderItem;
+import br.com.jfood.ms_orders.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

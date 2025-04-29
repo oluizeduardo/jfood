@@ -1,4 +1,4 @@
-package br.com.jfood.orders_ms.versionlogger;
+package br.com.jfood.ms_orders.versionlogger;
 
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;

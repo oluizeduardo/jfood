@@ -1,4 +1,4 @@
-package br.com.jfood.orders_ms.dto;
+package br.com.jfood.ms_orders.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

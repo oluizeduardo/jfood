@@ -1,4 +1,4 @@
-package br.com.jfood.orders_ms.model;
+package br.com.jfood.ms_orders.model;
 
 import jakarta.persistence.*;
 
@@ -74,6 +74,14 @@ public class Order {
     }
 
     public void setItems(List<OrderItem> items) {
+        // Clear previous bidirectional references
+        if (this.items != null) {
+            this.items.forEach(item -> item.setOrder(null));
+        }
         this.items = items;
+        // Set new bidirectional references
+        if (items != null) {
+            items.forEach(item -> item.setOrder(this));
+        }
     }
 }

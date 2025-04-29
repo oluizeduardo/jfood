@@ -1,9 +1,9 @@
-package br.com.jfood.orders_ms.controller;
+package br.com.jfood.ms_orders.controller;
 
-import br.com.jfood.orders_ms.dto.PageResponseDTO;
-import br.com.jfood.orders_ms.dto.PurchaseOrderRequestDTO;
-import br.com.jfood.orders_ms.dto.PurchaseOrderResponseDTO;
-import br.com.jfood.orders_ms.service.OrderService;
+import br.com.jfood.ms_orders.dto.PageResponseDTO;
+import br.com.jfood.ms_orders.dto.PurchaseOrderRequestDTO;
+import br.com.jfood.ms_orders.dto.PurchaseOrderResponseDTO;
+import br.com.jfood.ms_orders.service.OrderService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

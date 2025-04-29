@@ -1,5 +1,6 @@
-package br.com.jfood.orders_ms.dto;
+package br.com.jfood.ms_orders.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,6 +12,7 @@ public class PurchaseOrderRequestDTO {
     private Long userId;
 
     @NotEmpty(message = "Order must have at least one item")
+    @Valid
     private List<OrderItemRequestDTO> items;
 
     public PurchaseOrderRequestDTO() {

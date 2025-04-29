@@ -1,4 +1,4 @@
-package br.com.jfood.orders_ms.model;
+package br.com.jfood.ms_orders.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

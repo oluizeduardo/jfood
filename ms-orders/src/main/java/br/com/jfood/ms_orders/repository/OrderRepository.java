@@ -1,6 +1,6 @@
-package br.com.jfood.orders_ms.repository;
+package br.com.jfood.ms_orders.repository;
 
-import br.com.jfood.orders_ms.model.Order;
+import br.com.jfood.ms_orders.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
