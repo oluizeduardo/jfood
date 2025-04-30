@@ -15,8 +15,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "keycloak_user_id", nullable = false)
+    private String keycloakUserId;
 
     @Column(name = "purchase_date", nullable = false)
     private LocalDateTime purchaseDate;
@@ -30,9 +30,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, Long userId, LocalDateTime purchaseDate, BigDecimal totalAmount, List<OrderItem> items) {
+    public Order(Long id, String keycloakUserId, LocalDateTime purchaseDate, BigDecimal totalAmount, List<OrderItem> items) {
         this.id = id;
-        this.userId = userId;
+        this.keycloakUserId = keycloakUserId;
         this.purchaseDate = purchaseDate;
         this.totalAmount = totalAmount;
         this.items = items;
@@ -46,12 +46,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getKeycloakUserId() {
+        return keycloakUserId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setKeycloakUserId(String keycloakUserId) {
+        this.keycloakUserId = keycloakUserId;
     }
 
     public LocalDateTime getPurchaseDate() {

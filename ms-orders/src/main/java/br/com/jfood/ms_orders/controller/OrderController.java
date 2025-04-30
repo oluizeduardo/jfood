@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,8 +29,9 @@ public class OrderController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping
-    public ResponseEntity<Object> addOrder(@RequestBody @Valid PurchaseOrderRequestDTO purchaseOrderDTO) {
-        return orderService.add(purchaseOrderDTO);
+    public ResponseEntity<Object> addOrder(@RequestBody @Valid PurchaseOrderRequestDTO purchaseOrderDTO,
+                                           @AuthenticationPrincipal Jwt jwt) {
+        return orderService.add(purchaseOrderDTO, jwt.getSubject());
     }
 
     @PreAuthorize("hasRole('MANAGER')")

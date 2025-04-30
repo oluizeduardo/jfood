@@ -1,6 +1,6 @@
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL,
+    keycloak_user_id VARCHAR(80) NOT NULL,
     purchase_date TIMESTAMP NOT NULL,
     total_amount NUMERIC(9, 2) NOT NULL
 );
