@@ -9,7 +9,7 @@ import java.util.List;
 public class PurchaseOrderResponseDTO {
 
     private Long orderId;
-    private Long userId;
+    private String keycloakUserId;
     private LocalDateTime purchaseDate;
     private BigDecimal totalAmount;
     private List<OrderItemResponseDTO> items;
@@ -17,9 +17,9 @@ public class PurchaseOrderResponseDTO {
     public PurchaseOrderResponseDTO() {
     }
 
-    public PurchaseOrderResponseDTO(Long orderId, Long userId, LocalDateTime purchaseDate, BigDecimal totalAmount, List<OrderItemResponseDTO> items) {
+    public PurchaseOrderResponseDTO(Long orderId, String keycloakUserId, LocalDateTime purchaseDate, BigDecimal totalAmount, List<OrderItemResponseDTO> items) {
         this.orderId = orderId;
-        this.userId = userId;
+        this.keycloakUserId = keycloakUserId;
         this.purchaseDate = purchaseDate;
         this.totalAmount = totalAmount;
         this.items = items;
@@ -33,12 +33,12 @@ public class PurchaseOrderResponseDTO {
         this.orderId = orderId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getKeycloakUserId() {
+        return keycloakUserId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setKeycloakUserId(String keycloakUserId) {
+        this.keycloakUserId = keycloakUserId;
     }
 
     public LocalDateTime getPurchaseDate() {

@@ -24,20 +24,22 @@ public class OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepository orderRepository;
+    private final ProductPriceService productPriceService;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, ProductPriceService productPriceService) {
         this.orderRepository = orderRepository;
+        this.productPriceService = productPriceService;
     }
 
     @Transactional
-    public ResponseEntity<Object> add(PurchaseOrderRequestDTO dto) {
+    public ResponseEntity<Object> add(PurchaseOrderRequestDTO dto, String userId) {
         if (dto == null) {
             var message = "Received PurchaseOrderRequestDTO null.";
             logger.warn(message);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(message));
         }
-        logger.info("Saving new order.");
-        Order savedOrder = orderRepository.save(buildOrder(dto));
+        logger.info("User [{}] is creating an order", userId);
+        Order savedOrder = orderRepository.save(buildOrder(dto, userId));
         PurchaseOrderResponseDTO response = buildOrderDTO(savedOrder);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -54,7 +56,7 @@ public class OrderService {
 
             return new PurchaseOrderResponseDTO(
                     order.getId(),
-                    order.getUserId(),
+                    order.getKeycloakUserId(),
                     order.getPurchaseDate(),
                     order.getTotalAmount(),
                     itemDTOs
@@ -109,9 +111,6 @@ public class OrderService {
 
         Order existingOrder = optionalOrder.get();
 
-        if (dto.getUserId() != null)
-            existingOrder.setUserId(dto.getUserId());
-
         // Atualiza os itens do pedido
         if (dto.getItems() != null && !dto.getItems().isEmpty()) {
             List<OrderItem> updatedItems = dto.getItems()
@@ -143,22 +142,22 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    private Order buildOrder(PurchaseOrderRequestDTO dto) {
+    private Order buildOrder(PurchaseOrderRequestDTO dto, String keycloakUserId) {
         if (dto == null)
             throw new IllegalArgumentException("PurchaseOrderRequestDTO cannot be null");
 
         Order order = new Order();
-        order.setUserId(dto.getUserId());
+        order.setKeycloakUserId(keycloakUserId);
         order.setPurchaseDate(LocalDateTime.now());
 
         // Convertendo a lista de itens do DTO para uma lista de OrderItem
         List<OrderItem> items = dto.getItems().stream()
                 .map(itemDto -> {
                     OrderItem item = new OrderItem();
-                    item.setProductId(itemDto.getProductId());
+                    var productId = itemDto.getProductId();
+                    item.setProductId(productId);
                     item.setQuantity(itemDto.getQuantity());
-                    // TODO: buscar o preço no serviço ms-products.
-                    item.setPrice(new BigDecimal(0));
+                    item.setPrice(getProductPrice(productId));
                     item.setOrder(order);
                     return item;
                 })
@@ -167,6 +166,12 @@ public class OrderService {
         order.setItems(items);
         order.setTotalAmount(calculateTotalAmount(items));
         return order;
+    }
+
+    private BigDecimal getProductPrice(Long productId) {
+        if (productId == null)
+            return BigDecimal.ZERO;
+        return productPriceService.searchProductPrice(productId);
     }
 
     public static BigDecimal calculateTotalAmount(List<OrderItem> items) {
@@ -184,7 +189,7 @@ public class OrderService {
 
         PurchaseOrderResponseDTO orderResponse = new PurchaseOrderResponseDTO();
         orderResponse.setOrderId(order.getId());
-        orderResponse.setUserId(order.getUserId());
+        orderResponse.setKeycloakUserId(order.getKeycloakUserId());
         orderResponse.setPurchaseDate(order.getPurchaseDate());
 
         List<OrderItemResponseDTO> items = order.getItems().stream()
