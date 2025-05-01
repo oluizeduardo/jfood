@@ -62,8 +62,8 @@ public class ProductClientService {
     }
 
     public BigDecimal fallbackGetPrice(Long productId, Throwable throwable) {
-        logger.error("Impossible to get the price of product [{}]. Product service is unavailable!", productId);
-        return BigDecimal.ZERO;
+        logger.error("Impossible to get the price of product [{}]. Product service is unavailable - returning default price.", productId);
+        return BigDecimal.ONE;
     }
 }
 
