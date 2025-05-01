@@ -119,7 +119,7 @@ public class OrderService {
                         OrderItem item = new OrderItem();
                         item.setProductId(itemDTO.getProductId());
                         item.setQuantity(itemDTO.getQuantity());
-                        item.setPrice(getProductPrice(id));
+                        item.setPrice(getProductPrice(itemDTO.getProductId()));
                         item.setOrder(existingOrder);
                         return item;
                     })
