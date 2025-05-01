@@ -24,11 +24,11 @@ public class OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepository orderRepository;
-    private final ProductPriceService productPriceService;
+    private final ProductClientService productClientService;
 
-    public OrderService(OrderRepository orderRepository, ProductPriceService productPriceService) {
+    public OrderService(OrderRepository orderRepository, ProductClientService productClientService) {
         this.orderRepository = orderRepository;
-        this.productPriceService = productPriceService;
+        this.productClientService = productClientService;
     }
 
     @Transactional
@@ -119,8 +119,7 @@ public class OrderService {
                         OrderItem item = new OrderItem();
                         item.setProductId(itemDTO.getProductId());
                         item.setQuantity(itemDTO.getQuantity());
-                        // TODO: buscar o preço no serviço ms-products.
-                        item.setPrice(new BigDecimal(0));
+                        item.setPrice(getProductPrice(itemDTO.getProductId()));
                         item.setOrder(existingOrder);
                         return item;
                     })
@@ -169,9 +168,7 @@ public class OrderService {
     }
 
     private BigDecimal getProductPrice(Long productId) {
-        if (productId == null)
-            return BigDecimal.ZERO;
-        return productPriceService.searchProductPrice(productId);
+        return productClientService.getProductPrice(productId);
     }
 
     public static BigDecimal calculateTotalAmount(List<OrderItem> items) {
