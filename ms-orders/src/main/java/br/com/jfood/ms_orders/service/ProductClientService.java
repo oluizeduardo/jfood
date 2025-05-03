@@ -11,20 +11,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 
-/**
- * Service responsible for retrieving product pricing information from the {@code ms-products} microservice.
- * <p>
- * This service uses a {@link RestTemplate} to send HTTP GET requests to the external product service,
- * retrieving product details by ID and extracting the current price.
- * <p>
- * If the product is not found or an error occurs during the request, the service logs the issue
- * and returns {@code BigDecimal.ZERO} as a fallback.
- *
- * <p>Example usage:</p>
- * <pre>{@code
- * BigDecimal price = productPriceService.searchProductPrice(1L);
- * }</pre>
- */
 @Service
 public class ProductClientService {
 
@@ -33,7 +19,9 @@ public class ProductClientService {
     private final RestTemplate restTemplate;
     private final String productApiUrl;
 
-    public ProductClientService(RestTemplate restTemplate, @Value("${product.api.url}") String productApiUrl) {
+    public ProductClientService(RestTemplate restTemplate,
+                                @Value("${product.api.url}") String productApiUrl) {
+
         if (productApiUrl == null || productApiUrl.trim().isEmpty()) {
             throw new IllegalArgumentException("Missing configuration: 'product.api.url' must be set in application.properties.");
         }
@@ -50,20 +38,36 @@ public class ProductClientService {
 
         try {
             ProductResponseDTO product = restTemplate.getForObject(productApiUrl, ProductResponseDTO.class, productId);
+
             if (product != null && product.price() != null) {
                 return product.price();
             } else {
-                logger.warn("Price not found for product with ID {}", productId);
+                var message = "Price not found for product with ID [" + productId + "].";
+                logger.warn(message);
+                throw new RuntimeException(message);
             }
         } catch (HttpClientErrorException e) {
-            logger.error("Error searching for product with ID {}: {}", productId, e.getMessage());
+            logger.error("HTTP client error while requesting product with ID {}: [{}] - {}",
+                    productId,
+                    e.getStatusCode().value(),
+                    e.getResponseBodyAsString());
+            throw e;
         }
-        return BigDecimal.ZERO;
     }
 
     public BigDecimal fallbackGetPrice(Long productId, Throwable throwable) {
-        logger.error("Impossible to get the price of product [{}]. Product service is unavailable - returning default price.", productId);
-        return BigDecimal.ONE;
+        logger.error("Unable to retrieve price for product [{}]. Product service is unavailable. Using fallback mechanism.", productId, throwable);
+
+        return ProductCacheService.getCachedProducts().stream()
+                .filter(product -> product.id().equals(productId))
+                .findFirst()
+                .map(ProductResponseDTO::price)
+                .orElseGet(() -> {
+                    logger.warn("Product [{}] not found in cache. Returning default fallback price.", productId);
+                    return BigDecimal.ONE;
+                });
     }
+
+
 }
 

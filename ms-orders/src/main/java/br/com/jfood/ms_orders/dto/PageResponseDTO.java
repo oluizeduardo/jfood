@@ -41,6 +41,9 @@ public class PageResponseDTO<T> {
     private int totalPages;
     private boolean last;
 
+    public PageResponseDTO() {
+    }
+
     public PageResponseDTO(Page<T> page) {
         this.content = page.getContent();
         this.pageNumber = page.getNumber();
