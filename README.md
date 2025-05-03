@@ -31,7 +31,7 @@ A autenticação é realizada utilizando o **Keycloak**, com suporte à geraçã
 ## Instalação e Execução
 1. **Clone o repositório:**
    ```sh
-   git clone https://github.com/seu-usuario/jfood.git
+   git clone https://github.com/oluizeduardo/jfood.git
    cd jfood
    ```
 2. **Configure as variáveis de ambiente:**
