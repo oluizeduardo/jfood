@@ -76,6 +76,14 @@ services:
     networks:
       - jfood_net
 
+  redis:
+    image: redis:7-alpine
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - jfood_net 
+
 volumes:
   pg_data:
   jenkins_home:

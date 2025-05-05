@@ -2,8 +2,6 @@
 
 Microsserviço responsável pela gestão de usuários dentro da aplicação **JFood**. Ele oferece funcionalidades como cadastro, consulta e exclusão de usuários, além de realizar a integração com o **Keycloak** para registro e autenticação.
 
-Este microserviço é parte essencial da arquitetura distribuída da aplicação **JFood**, garantindo o gerenciamento seguro e eficiente dos usuários.
-
 ## ⚙️ Funcionalidades
 
 - 📋 Cadastro de novos usuários
@@ -11,37 +9,26 @@ Este microserviço é parte essencial da arquitetura distribuída da aplicação
 - ❌ Exclusão de usuários
 - 🔐 Cadastro automático de usuários no **Keycloak** para autenticação e autorização
 
-## 🧱 Estrutura de Pacotes
+## 🚀 Ordem de execução
 
-Este microserviço segue as boas práticas de desenvolvimento com **Spring Boot**, organizando o código em camadas bem definidas:
+> Atenção à ordem de inicialização dos serviços para garantir o funcionamento correto:
 
-- `amqp` – Responsável pela configuração e comunicação com a fila do **RabbitMQ**
-- `config` – Contém as configurações gerais da aplicação, incluindo segurança, ExceptionHandlers, e beans customizados
-- `controller` – Define os endpoints REST e lida com as requisições da camada de apresentação
-- `dto` – Objetos de transferência de dados utilizados na comunicação entre camadas
-- `model` – Entidades de domínio que representam as tabelas do banco de dados
-- `repository` – Interfaces de acesso a dados, utilizando o **Spring Data JPA**
-- `service` – Contém a lógica de negócio e orquestra as operações do sistema
-- `versionlogger` – Componente responsável por exibir logs com informações da versão da aplicação durante a inicialização
+1. [Service Registry - Eureka Server](https://github.com/oluizeduardo/jfood/tree/main/ms-service-registry)
+2. [API Gateway (api-gateway)](https://github.com/oluizeduardo/jfood/tree/main/api-gateway)
+3. Demais microsserviços (ex: ms-users, ms-notification, etc.)
 
 ## ⚙️ Executando localmente
-
 ```bash
-# 1. Clone o repositório.
+# 1. Clone o repositório
 git clone https://github.com/oluizeduardo/jfood.git
 
-# 2. Inicie o Eureka Service Registry.
-cd jfood/ms-service-registry
-mvn spring-boot:run
-
-# 3. Acesse a pasta do serviço.
+# 2. Acesse a pasta do serviço
 cd jfood/ms-users
 
-# 4. Compile e execute a aplicação.
-# As migrações do Flyway vão executar automaticamente ao subir a aplicação
+# 3. Compile e execute a aplicação
 mvn spring-boot:run
 ```
----
+
 
 ## 📬 Postman Collection
 
