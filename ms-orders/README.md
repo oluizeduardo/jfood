@@ -20,7 +20,7 @@ Microsserviço responsável pelo **cadastro e gerenciamento de pedidos de compra
 
 Todas as operações do **ms-orders** exigem que o usuário esteja **autenticado via Keycloak**.
 
-- O token JWT deve ser fornecido no cabeçalho Authentication Bearer das requisições.
+- O token JWT deve ser fornecido no cabeçalho `Authentication: Bearer` das requisições.
 - O token deve conter informações do usuário autenticado, que será associado ao pedido.
 
 ## 🛠️ Configuração e Execução
