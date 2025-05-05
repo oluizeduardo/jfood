@@ -55,6 +55,7 @@ A autenticação é realizada utilizando o **Keycloak**, com suporte à geraçã
    | SonarQube   | http://localhost:7002   | admin / admin               |
    | Jenkins     | http://localhost:7003   | senha gerada no container   |
    | RabbitMQ    | http://localhost:15672  | `guest`/`guest`             |
+   | Redis       | http://localhost:6379   |                             |
 
    **Para parar e remover os containers:**
    ```sh

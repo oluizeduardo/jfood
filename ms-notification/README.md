@@ -10,6 +10,14 @@ Este serviço atua exclusivamente como um consumidor da fila, e só realiza envi
 - 🗑️ Simulação de envio de e-mail de **confirmação de exclusão de conta** quando um usuário é removido
 - 🔁 Consumo assíncrono de eventos da fila do **RabbitMQ**
 
+## 🚀 Ordem de execução
+
+> Atenção à ordem de inicialização dos serviços para garantir o funcionamento correto:
+
+1. [Service Registry - Eureka Server](https://github.com/oluizeduardo/jfood/tree/main/ms-service-registry)
+2. API Gateway (api-gateway)
+3. Demais microsserviços (ex: ms-users, ms-notification, etc.)
+
 ## 🛠️ Configuração e Execução
 
 ### Rodando localmente
