@@ -10,13 +10,14 @@ ARG GID=1000
 RUN groupadd -g ${GID} ${GROUP} \
     && useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USER}
 
-USER $USER
-
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
 
 # Copia o arquivo .jar para dentro do container
-COPY target/*.jar app.jar
+COPY --chown=${USER}:${GROUP} target/*.jar app.jar
+
+# Alterar usuario
+USER $USER
 
 # Permite passar opções para a JVM via variável de ambiente JAVA_OPTS
 ENV JAVA_OPTS=""
